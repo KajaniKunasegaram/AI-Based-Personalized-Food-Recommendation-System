@@ -83,3 +83,7 @@ Route::get('client/orders',function(){
     return view('client.orders');
 });
 
+Route::get('client/layout',function(){
+    return view('client.layout');
+});
+

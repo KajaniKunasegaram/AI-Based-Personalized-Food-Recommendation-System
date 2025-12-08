@@ -169,6 +169,7 @@
             .list-group-item:hover {
                 background-color: green;
                 cursor: pointer;
+                color:white;
             }
 
             #moreToggle:hover {
@@ -199,7 +200,6 @@
                 overflow-y: auto;
                 padding-left: 10px;
                 padding-right: 10px;
-
             }
         </style>
     </head>
@@ -276,11 +276,11 @@
                         <li class="list-group-item d-flex align-items-center custom-border">
                             <i class="bi bi-file-earmark-text me-2"></i> Orders
                         </li>
-                    </a>      
+                    </a>  
 
                     <a href="{{url('admin/take-payment')}}" class="text-decoration-none">
                         <li class="list-group-item d-flex align-items-center custom-border">
-                            <i class="bi bi-wallet me-2"></i>Take Payment</a>
+                            <i class="bi bi-wallet me-2"></i>Take Payment
                         </li>
                     </a>
                     
@@ -298,13 +298,13 @@
 
                     <a href="{{url('admin/business-hours')}}" class="text-decoration-none">
                         <li class="list-group-item d-flex align-items-center custom-border">
-                            <i class="bi bi-clock  me-2"></i>Business Hours</a>
+                            <i class="bi bi-clock  me-2"></i>Business Hours
                         </li>
                     </a>
 
                     <a href="{{url('admin/delivery-configuration')}}" class="text-decoration-none">
                         <li class="list-group-item d-flex align-items-center custom-border">
-                            <i class="bi bi-truck me-2"></i>Delivery Configuration</a>
+                            <i class="bi bi-truck me-2"></i>Delivery Configuration
                         </li>
                     </a>
 
