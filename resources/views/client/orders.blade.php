@@ -1,7 +1,7 @@
 @extends('client.layout')
 @section('content')
 
-    <link rel="stylesheet" href="{{asset('css/client-order.css')}}">        
+    <link rel="stylesheet" href="{{asset('css/client/client-order.css')}}">        
 
     <div class="container">
         <div class="order-container">

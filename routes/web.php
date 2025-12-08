@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BusinessHoursController;
-
+use App\Http\Controllers\CategoryController;
 // Route::get('/', function () {
 //     return view('welcome');
 // });
@@ -71,10 +71,13 @@ Route::get('/admin/menus/load/{page}', function ($page) {
     return view("admin.menus.$page");
 });
 
-Route::get('/admin/add-category',function(){
-    return view('admin.menus.add-update-menus.add-category');
-})->name('add-category');
+// Route::get('/admin/add-category',function(){
+//     return view('admin.menus.add-update-menus.add-category');
+// })->name('add-category');
 
+
+Route::get('/admin/menus/menus', [CategoryController::class, 'index'])->name('categories.index');
+Route::post('admin/menus/menus', [CategoryController::class, 'store'])->name('categories.store');
 
 
 

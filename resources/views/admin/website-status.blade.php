@@ -6,7 +6,7 @@
 @section('content')
     <html>
         <head>
-            <link rel="stylesheet" href="{{asset('css/website-status.css')}}">        
+            <link rel="stylesheet" href="{{asset('css/admin/website-status.css')}}">        
         </head>
 
         <body>
