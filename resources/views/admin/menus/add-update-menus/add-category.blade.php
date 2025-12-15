@@ -161,39 +161,51 @@
         <div class="image-circle" onclick="document.getElementById('fileInput').click();">
             <span class="image-hint">Upload Image</span>
         </div>
-        <input type="file" id="fileInput" style="display:none;">
-
-        <form>
+        <form action="{{ route('categories.store') }}" method="POST" enctype="multipart/form-data">
+        @csrf
+            <input type="file" id="cat_image" name="cat_image" style="display:none;">
 
             <div class="form-group">
                 <label>Category Name</label>
-                <input type="text" placeholder="Pizza, Burger, Drinks...">
+                <input class="catname" name="cat_name" type="text" placeholder="Pizza, Burger, Drinks....">
             </div>
 
             <div class="form-group">
                 <label>Description</label>
-                <textarea placeholder="Short description"></textarea>
+                <textarea class="catname" name="cat_description" placeholder="Short description"></textarea>
             </div>
 
             <div class="form-group">
                 <label>Status (Active / Inactive)</label><br>
                 <label class="switch">
-                    <input type="checkbox" checked>
+                    <input type="checkbox" name="cat_status" value="1" checked>
                     <span class="slider"></span>
                 </label>
             </div>
 
-            <button class="save-btn">Save Category</button>
-
+            <div class="btns">
+                <button onclick="closeModal()" type="button" class="btn-cancel">Cancel</button>
+                <button type="submit" class="btn-save">Save</button>
+            </div>
         </form>
 
     </div>
 
+    @if(session('success'))
+        <div id="successMessage" class="alert alert-success text-center">
+            {{ session('success') }}
+        </div>
+    @endif
+
 <script>
-    const fileInput = document.getElementById('fileInput');
+   
+   
+    // Selected image view
+
+    const cat_image=document.getElementById('cat_image');
     const imgBox = document.querySelector('.image-circle');
 
-    fileInput.addEventListener('change', function() {
+    cat_image.addEventListener('change', function() {
         const file = this.files[0];
         if (!file) return;
 
@@ -203,6 +215,13 @@
         imgBox.innerHTML = "";
         imgBox.appendChild(img);
     });
+
+    setTimeout(function() {
+        var msg = document.getElementById('successMessage');
+        if(msg) {
+            msg.style.display = 'none';
+        }
+    }, 3000);
 </script>
 
 </body>

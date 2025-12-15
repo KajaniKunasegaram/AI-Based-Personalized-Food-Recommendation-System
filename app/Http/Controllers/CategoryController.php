@@ -7,7 +7,11 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function index()
+    public function create()
+    {
+        return view('admin.menus.add-update-menus.add-category');
+    }
+        public function index()
     {
         $categories = CategoryModel::orderBy('cat_id','desc')->get();
         return view('admin.menus.menus',compact('categories'));

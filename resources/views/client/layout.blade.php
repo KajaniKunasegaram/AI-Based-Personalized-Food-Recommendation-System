@@ -102,7 +102,7 @@
 
                 <!-- FOOTER -->
             <div class="footer">
-                © {{ date('Y') }} MyBrand. All Rights Reserved.
+                © {{ date('Y') }} All Rights Reserved.
             </div>
         </div>
 

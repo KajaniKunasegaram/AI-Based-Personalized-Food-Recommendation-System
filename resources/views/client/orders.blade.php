@@ -25,14 +25,14 @@
                         </p>
 
                         <div class="delivery-pickup">
-                            <div class="options">
+                            <div class="options active"  data-type="delivery">
                                 <i class="fa fa-truck"></i>
                                 <div class="option">
                                     <div class="title">Delivery</div>                                
                                     <div class="subtitle">Pre-order</div>
                                 </div>
                             </div>
-                            <div class="options">
+                            <div class="options" data-type="pickup">
                                 <i class="fa fa-shopping-bag"></i>
                                  <div class="option">
                                     <div class="title">Pickup</div>                                
@@ -60,7 +60,8 @@
                 <ul>
                     <li class="active">All Items</li>
                     <li>Pizzas</li>
-                    <li>Garlic Bread</li>
+                    <li>Burgers</li>
+                    <!-- <li>Garlic Bread</li>
                     <li>USA Burgers</li>
                     <li>USA Chicken Kebab</li>
                     <li>USA Wraps And Dippers</li>
@@ -69,7 +70,7 @@
                     <li>Meal Deals</li>
                     <li>Desserts</li>
                     <li>Drinks</li>
-                    <li>USA Rice bowl</li>
+                    <li>USA Rice bowl</li> -->
                 </ul>
             </div>
 
@@ -105,12 +106,30 @@
                             <div class="size-box"><strong>10" Margherita</strong><br>£8.40</div>
                         </div>
                     </div>
-
                 </div>
             </div>
-
-        </div>
-
-        
+        </div>        
     </div>
+
+    
+<script>
+       const options = document.querySelectorAll('.delivery-pickup .options');
+
+    options.forEach(option => {
+        option.addEventListener('click', () => {
+
+            // remove active from all
+            options.forEach(o => o.classList.remove('active'));
+
+            // add active only to clicked one
+            option.classList.add('active');
+
+            // optional: check which is selected
+            console.log("Selected:", option.dataset.type);
+        });
+    });
+</script>
 @endsection
+
+
+

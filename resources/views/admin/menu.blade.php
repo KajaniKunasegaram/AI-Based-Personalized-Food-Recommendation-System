@@ -113,7 +113,7 @@
             <a href="{{url('client/orders')}}" class="btn w-100 btn-hover-success">Preview Website</a>
 
             <ul class="list-group">
-                <li class="list-group-item" data-target="menus">Menu</li>
+                <li class="list-group-item active" data-target="menus">Menu</li>
                 <li class="list-group-item" data-target="categories">Categories</li>
                 <li class="list-group-item" data-target="sub-categories">Sub Categories</li>
                 <li class="list-group-item" data-target="items">Items</li>
@@ -132,7 +132,7 @@
 
     </div>
 
-    <script>
+    <script>        
         document.querySelectorAll(".list-group-item").forEach(item=>{
             item.addEventListener("click",function(){
                 document.querySelectorAll(".list-group-item").forEach(i=>i.classList.remove("active"));

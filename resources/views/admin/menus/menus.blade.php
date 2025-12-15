@@ -8,105 +8,83 @@
         <div class="buttons">
             <input type="text" class="search-input" id="searchInput" placeholder="Search here...">
             <div class="d-flex gap-2">           
-                <button id="toggleCollapseBtn" class="btn border-success text-success">Collapse All</button>
-                <button class="btn border-success text-success" data-bs-toggle="modal" data-bs-target="#sortCategoriesModal">Sort Categories</button>
-                <button onclick="openCategoryModal()" class="btn border-success text-success">Add Category</button>
+                <!-- <button id="toggleCollapseBtn" class="btn btn-outline-success">Collapse All</button> -->
+                <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#sortCategoriesModal">Sort Categories</button>
+                <button class="btn btn-outline-success" onclick="window.location='{{ route('categories.create') }}'">Add Category</button>
             </div>
         </div>
     </div>
 </div>
- <div id="successMessage" class="alert alert-success text-center">
-Category added successfully!    </div>
 
-<div id="addCategoryModal" class="modal-overlay">
+
+
+<div class="category-box">
+
+    <!-- Category Row -->
+
+
+    <div class="category-row">
+        <span class="cat-name">abc</span>
+
+        <div class="cat-actions">
+            <button class="btn btn-outline-secondary btn-sm">Edit Category</button>
+            <button class="btn btn-outline-success btn-sm">+ Add SubCategory</button>
+        </div>
+    </div>
+     
+
+    <!-- Sub Category Row -->
     <div class="category-box">
-        <div class="modal-header justify-content-center position-relative">
-            <h5 class="modal-title text-center" id="addCategoryLabel">Add Category</h5>
-            <button type="button" class="btn-close position-absolute end-0 top-0 m-3" onclick="closeModal()"></button>
+        <div class="subcategory-row">
+            <span class="subcat-name">2</span>
+
+            <div class="subcat-actions">
+                <button class="btn btn-outline-secondary btn-sm">Edit SubCategory</button>
+                <button class="btn btn-outline-success btn-sm">+ Add Item</button>
+            </div>
         </div>
-            <!-- <div class="title">Add Category</div> -->
-        
-        <div class="image-circle" onclick="document.getElementById('cat_image').click();">
-            <span class="image-hint">Upload Image</span>
+        <!-- Item Row -->
+        <div class="category-box">
+            <div class="item-row">
+                <span class="item-name">defswa</span>
+
+                <div class="item-controls">
+                    <span class="price">£0.12</span>
+
+                    <select class="status-select">
+                        <option>Available</option>
+                        <option>Unavailable</option>
+                    </select>
+                  
+                    <button class="btn btn-outline-secondary btn-sm">Edit</button>
+                    <button class="btn btn-outline-danger btn-sm">Delete</button>
+                </div>
+            </div>
         </div>
+         <div class="category-box">
+            <div class="item-row">
+                <span class="item-name">defswa</span>
 
-        <form action="{{route('categories.store')}}" method="POST" enctype="multipart/form-data">
+                <div class="item-controls">
+                    <span class="price">£0.12</span>
 
-            @csrf
-            <input type="file" id="cat_image" name="cat_image" style="display:none;">
+                    <select class="status-select">
+                        <option>Available</option>
+                        <option>Unavailable</option>
+                    </select>
 
-            <div class="form-group">
-                <label>Category Name</label>
-                <input class="catname" name="cat_name" type="text" placeholder="Pizza, Burger, Drinks....">
+                    <button class="btn btn-outline-secondary btn-sm">Edit</button>
+                    <button class="btn btn-outline-danger btn-sm">Delete</button>
+                </div>
             </div>
-
-            <div class="form-group">
-                <label>Description</label>
-                <textarea class="catname" name="cat_description" placeholder="Short description"></textarea>
-            </div>
-
-            <div class="status">
-                <label>Availability</label><br>
-                <label class="switch">
-                    <input type="checkbox" name="cat_status" value="1" checked>
-                    <span class="slider"></span>
-                </label>
-            </div>
-
-            <div class="btns">
-                <button type="button" class="btn-cancel">Cancel</button>
-                <button type="submit" class="btn-save">Save</button>
-            </div>
-        </form>
+        </div>
     </div>
+
 </div>
 
-@if(session('success'))
-    <div id="successMessage" class="alert alert-success text-center">
-        {{ session('success') }}
-    </div>
-@endif
 
 <script>
-    function openCategoryModal() {
-        document.getElementById('addCategoryModal').classList.add('show');
-    }
 
-    function closeModal() {
-        document.getElementById('addCategoryModal').classList.remove('show');
-    }
-
-    // Optional: click outside modal to close
-    window.addEventListener('click', function(e){
-        const modal = document.getElementById('addCategoryModal');
-        if(e.target === modal){
-            closeModal();
-        }
-    });
-
-    // Selected image view
-
-    const cat_image=document.getElementById('cat_image');
-    const imgBox = document.querySelector('.image-circle');
-
-    cat_image.addEventListener('change', function() {
-        const file = this.files[0];
-        if (!file) return;
-
-        const img = document.createElement("img");
-        img.src = URL.createObjectURL(file);
-
-        imgBox.innerHTML = "";
-        imgBox.appendChild(img);
-    });
-
-
-    // setTimeout(function() {
-    //     var msg = document.getElementById('successMessage');
-    //     if(msg) {
-    //         msg.style.display = 'none';
-    //     }
-    // }, 3000);
 </script>
 
   

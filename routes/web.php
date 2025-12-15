@@ -71,14 +71,17 @@ Route::get('/admin/menus/load/{page}', function ($page) {
     return view("admin.menus.$page");
 });
 
-// Route::get('/admin/add-category',function(){
-//     return view('admin.menus.add-update-menus.add-category');
-// })->name('add-category');
 
 
-Route::get('/admin/menus/menus', [CategoryController::class, 'index'])->name('categories.index');
-Route::post('admin/menus/menus', [CategoryController::class, 'store'])->name('categories.store');
+//Add Update
+Route::get('/admin/menus/add-category', [CategoryController::class, 'create'])
+    ->name('categories.create');
 
+Route::post('/admin/menus/store-category', [CategoryController::class, 'store'])
+    ->name('categories.store');
+
+
+// Route::post('admin/menus/menus', [CategoryController::class, 'store'])->name('categories.store');
 
 
 //Client

@@ -42,7 +42,7 @@
     display:flex;
 }
 
-.category-box {
+.add-category-box {
     background:#fff;
     padding:20px;
     border-radius:10px;
@@ -83,12 +83,15 @@ label {
 
 
 /* ROUND IMAGE PREVIEW */
-.image-circle {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
+.image-square,
+.sub-image-square {
+    width: 100%;
+    height: 30%;
+    border-radius:10px;
     border: 3px solid #bbb;
-    margin: 40px auto 20px auto;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    /* margin: 40px auto 20px auto; */
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -98,12 +101,14 @@ label {
     background: #f6f7f9;
 }
 
-.image-circle:hover {
+.image-square,
+.sub-image-square:hover {
     border-color: #2ecc71;
     background: #e5fff0;
 }
 
-.image-circle img {
+.image-square img,
+.sub-image-square img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -215,3 +220,101 @@ input:checked + .slider:before {
     right: 10px; 
     
 }
+
+
+
+
+
+
+
+
+
+
+.category-box {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 10px;
+    width: 100%;
+    background: #fff;
+    margin: 10px auto;
+}
+
+/* Shared row design */
+.category-row,
+.subcategory-row,
+.item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 5px;
+    /* border-bottom: 1px solid #eee; */
+}
+
+.item-row {
+    padding:0px;
+    /* border-bottom: 1px solid #eee; */
+}
+
+
+/* Text sizes */
+.cat-name {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.subcat-name {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.item-name {
+    font-size: 15px;
+}
+
+/* Right side action buttons */
+.cat-actions,
+.subcat-actions,
+.item-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Add links */
+.add-link {
+    color: #0d6efd;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.add-link:hover {
+    text-decoration: underline;
+}
+
+/* Price */
+.price {
+    font-weight: 600;
+}
+
+/* Availability select */
+.status-select {
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+
+/* .sub-image-square{
+    width: 100%;
+    height: 30%;
+    border-radius: 10px;
+    border: 3px solid #bbb;
+    margin: 40px auto 20px auto;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.25s ease;
+    background: #f6f7f9;
+} */
