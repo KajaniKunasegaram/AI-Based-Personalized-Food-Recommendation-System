@@ -133,20 +133,43 @@
     </div>
 
     <script>        
-        document.querySelectorAll(".list-group-item").forEach(item=>{
-            item.addEventListener("click",function(){
-                document.querySelectorAll(".list-group-item").forEach(i=>i.classList.remove("active"));
-                this.classList.add("active");
+        document.addEventListener("DOMContentLoaded", function () {
 
-                let target = this.getAttribute("data-target");
-
-                fetch(`/admin/menus/load/${target}`)
-                .then(response=>response.text())
-                .then(html =>{
-                    document.getElementById("load-area").innerHTML = html;
-                });
-            });
+    function loadTab(target) {
+        // active class
+        document.querySelectorAll(".list-group-item").forEach(i => {
+            i.classList.remove("active");
+            if (i.getAttribute("data-target") === target) {
+                i.classList.add("active");
+            }
         });
+
+        // load content
+        fetch(`/admin/menus/load/${target}`)
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById("load-area").innerHTML = html;
+            });
+    }
+
+    // sidebar click
+    document.querySelectorAll(".list-group-item").forEach(item => {
+        item.addEventListener("click", function () {
+            let target = this.getAttribute("data-target");
+            loadTab(target);
+        });
+    });
+
+    // 🔥 AUTO LOAD BASED ON URL PARAM
+        const params = new URLSearchParams(window.location.search);
+        const tab = params.get("tab");
+
+        if (tab) {
+            loadTab(tab);   // modifier-groups
+        }
+    });
+
+    
     </script>
 
 @endsection

@@ -155,7 +155,37 @@
                     align-items: center;
                     gap: 10px;
                 }
+                .mile-row-dis {
+                    display: flex;
+                    justify-content: space-between; /* left-right alignment */
+                    align-items: center;           /* vertically center text */
+                    padding: 8px;
+                    margin-bottom: 6px;
+                    border: 1px solid #ddd;
+                    border-radius: 6px;
+                    background: #f4f4f4;
+                }
+                .mile-left {
+                    font-weight: 500;
+                }
 
+                .mile-right {
+                    font-weight: bold;
+                    color: purple;
+                }
+
+                .success-alert {
+                    background: #d4edda;
+                    color: #155724;
+                    padding: 12px 20px;
+                    border-radius: 6px;
+                    margin-bottom: 15px;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    border: 1px solid #c3e6cb;
+                    font-weight: 500;
+                }
 
                 @media (max-width: 900px) {
                     .left-panel {
@@ -171,10 +201,18 @@
                         width: 95%;
                     }
                 }
+                
             </style>
         </head>
 
         <body>
+
+        @if(session('success'))
+            <div class="success-alert">
+                <i class="fas fa-check-circle"></i>
+                {{ session('success') }}
+            </div>
+        @endif
             <div class="contain">
                 <div class="left-panel">
                     <div class="distance-limit">
@@ -184,6 +222,18 @@
                             ▶
                         </div>
                     </div>
+                    @foreach($deliveries as $delivery)
+                        <div class="mile-row-dis delivery-item" data-id="{{ $delivery->id }}">
+                            <span class="mile-left">Postcode: {{ $delivery->postcode }}</span>
+                            <span class="mile-right">
+                                @if($delivery->delivery_charge === null)
+                                    Free Charge
+                                @else
+                                    {{ number_format($delivery->delivery_charge, 2) }}
+                                @endif
+                            </span>
+                        </div>
+                    @endforeach
                 </div>
 
                 <div class="right-panel">
@@ -194,26 +244,30 @@
                         </div>
                     </div>
                     <br>
-                    <form method="POST" id="delivery-form">
-             
+                    <form method="POST" id="delivery-form"
+                        action="{{ url('/admin/delivery-config') }}">
+                        @csrf
+                        <!-- <input type="hidden" name="distance" id="distance"> -->
+                        <input type="hidden" id="delivery-id">
+
                         <div class="form-group">
-                            <input type="text" name="postcode" class="form-control" placeholder="Postcode*" required>
+                            <input type="text" name="postcode" id="postcode" class="form-control" placeholder="Postcode*" required>
                         </div>
                         
                        
                         <label class="radio-option">
-                            <input type="radio" name="delivery_type" value="free" checked>
+                            <input type="radio" id="delivery_type" name="delivery_type" value="free" checked>
                             Free Delivery
                         </label>
 
                         <label class="radio-option">
-                            <input type="radio" name="delivery_type" value="charge">
+                            <input type="radio" id="delivery_type" name="delivery_type" value="charge">
                             Delivery Charge
                         </label>
                       
 
                         <div class="form-group" id="charge-input-box" style="display:none;">
-                            <input type="number" name="delivery_charge" class="form-control" placeholder="Enter Delivery Charge">
+                            <input type="number" id="delivery_charge" name="delivery_charge" id="delivery_charge" class="form-control" placeholder="Enter Delivery Charge">
                         </div>
 
                         <div class="action-buttons">
@@ -279,6 +333,46 @@
                     });
                 });
 
+                document.addEventListener('DOMContentLoaded', function () {
+
+                    let savedMile = localStorage.getItem('selected_mile');
+                    let savedValue = localStorage.getItem('selected_mile_value');
+
+                    // ✅ If no mile selected yet → default 5 miles
+                    if (!savedMile) {
+                        savedMile = '5 miles';
+                        savedValue = '5';
+
+                        localStorage.setItem('selected_mile', savedMile);
+                        localStorage.setItem('selected_mile_value', savedValue);
+                    }
+
+                    // Show in UI
+                    document.getElementById('selected-mile-text').innerText = savedMile;
+
+                    // Auto check radio
+                    let radio = document.querySelector(`input[name="mile"][value="${savedValue}"]`);
+                    if (radio) {
+                        radio.checked = true;
+                    }
+                });
+
+                document.querySelectorAll("input[name='mile']").forEach(radio => {
+                    radio.addEventListener("change", function () {
+
+                        let selectedValue = this.value + " miles";
+
+                        // Update UI
+                        document.getElementById("selected-mile-text").innerText = selectedValue;
+
+                        // Save selection
+                        localStorage.setItem('selected_mile', selectedValue);
+                        localStorage.setItem('selected_mile_value', this.value);
+
+                        closePopup();
+                    });
+                });
+
                 // Radio button logic
                 const radios = document.getElementsByName("delivery_type");
                 const chargeBox = document.getElementById("charge-input-box");
@@ -292,11 +386,80 @@
                         }
                     });
                 });
+
+                document.querySelectorAll('.delivery-item').forEach(item => {
+                    item.addEventListener('click', function () {
+
+                        let id = this.dataset.id;
+
+                        // highlight active row (optional but good UX)
+                        document.querySelectorAll('.delivery-item').forEach(el => el.classList.remove('active'));
+                        this.classList.add('active');
+
+                        fetch(`/admin/delivery-config/${id}`)
+                            .then(res => res.json())
+                            .then(data => {
+
+                                // Fill form
+                                document.getElementById('delivery-id').value = data.id;
+                                document.getElementById('postcode').value = data.postcode;
+
+                                document.querySelector(`input[name="delivery_type"][value="${data.delivery_type}"]`).checked = true;
+
+                                if (data.delivery_type === 'charge') {
+                                    document.getElementById('charge-input-box').style.display = 'block';
+                                    document.getElementById('delivery_charge').value = data.delivery_charge;
+                                } else {
+                                    document.getElementById('charge-input-box').style.display = 'none';
+                                    document.getElementById('delivery_charge').value = '';
+                                }
+
+                                // 🔁 Change UI to UPDATE mode
+                                document.getElementById('form-heading').innerText = 'Update Delivery Charge';
+                                document.getElementById('submit-button').innerText = 'UPDATE';
+
+                                document.getElementById('delivery-form').action =
+                                    `/admin/delivery-config/update/${data.id}`;
+
+                                // Show delete icon
+                                document.getElementById('delete-icon-container').style.display = 'block';
+
+                                document.getElementById('delete-button').onclick = function () {
+                                    deleteDelivery(data.id);
+                                };
+                            });
+                    });
+                });
+
+                function deleteDelivery(id) {
+                    if (!confirm('Are you sure you want to delete this delivery charge?')) return;
+
+                    fetch(`/admin/delivery-config/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(() => location.reload());
+                }
+                setTimeout(() => {
+                    const alert = document.querySelector('.success-alert');
+                    if (alert) alert.style.display = 'none';
+                }, 3000);
+
+                document.getElementById('reset-form').addEventListener('click', function() {
+                    const form = document.getElementById('delivery-form');
+                    form.reset(); // HTML form reset function
+                    
+                    // Extra: delivery charge box hide panna
+                    document.getElementById('charge-input-box').style.display = 'none';
+                        document.getElementById('form-heading').innerText = 'Add Delivery Charge';
+                                document.getElementById('submit-button').innerText = 'ADD';
+                });
             </script>
-        </body>
 
-     
-
-    </html>
+</body>
+</html>
 
 @endsection

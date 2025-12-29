@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>{{ isset($category) ? 'Update Category' : 'Add Category' }}</title>
+    <meta charset="UTF-8">
+    <title>{{ isset($subCategory) ? 'Update SubCategory' : 'Add SubCategory' }}</title>
 
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link rel="stylesheet" href="{{asset('css/admin/add-update.css')}}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{{asset('css/admin/add-update.css')}}">
 
 </head>
 
@@ -16,40 +15,42 @@
 <div class="header">
     <i class="fa-solid fa-chevron-left" onclick="window.location='{{ url('/admin/menu') }}'"></i>
     <div class="header-title">
-        {{ isset($category) ? 'Update Category' : 'Add Category' }}
+        {{ isset($subCategory) ? 'Update SubCategory' : 'Add SubCategory' }}
     </div>
 </div>
 
-<form action="{{ isset($category) 
-        ? route('categories.update', $category->cat_id) 
-        : route('categories.store') }}"
+<form action="{{ isset($subCategory) 
+        ? route('subCategories.update', $subCategory->sub_cat_id) 
+        : route('subCategories.store') }}"
       method="POST" enctype="multipart/form-data">
     @csrf
-    @if(isset($category))
+    @if(isset($subCategory))
         @method('PUT')
     @endif
 <div class="category-box">
 
     <div class="image-circle" onclick="document.getElementById('cat_image').click()">
         <!-- <span class="image-hint">Upload Image</span> -->
-        @if(!empty($category->cat_image))
-            <img src="{{ asset('storage/' . $category->cat_image) }}" alt="Category Image">
+        @if(!empty($subCategory->sub_cat_image))
+            <img src="{{ asset('storage/' . $subCategory->sub_cat_image) }}" alt="Category Image">
         @else
             <span class="image-hint">Upload Image</span>
         @endif
     </div>
 
-    <input type="file" id="cat_image" name="cat_image"  hidden>
+    <input type="file" id="cat_image" name="sub_cat_image"  hidden>
+
+    <input type="hidden" name="cat_id" value="{{ $selectedCategory }}">
 
     <div class="form-group">
         <label>Category Name</label>
-        <input type="text" name="cat_name" value="{{ $category->cat_name ?? '' }}" required>
+        <input type="text" name="sub_cat_name" value="{{ $subCategory->sub_cat_name ?? '' }}" required>
         <!-- <input type="text" name="cat_name" required> -->
     </div>
 
     <div class="form-group">
         <label>Description</label>
-        <textarea name="cat_description">{{ $category->cat_description ?? '' }}</textarea>
+        <textarea name="sub_cat_description">{{ $subCategory->sub_cat_description ?? '' }}</textarea>
 
         <!-- <textarea name="cat_description"></textarea> -->
     </div>
@@ -57,7 +58,7 @@
     <div class="form-group1">
         <label>Status</label>
         <label class="switch">
-            <input type="checkbox" name="cat_status" value="1" {{ isset($category) && $category->cat_status ? 'checked' : '' }}>
+            <input type="checkbox" name="sub_cat_status" value="1" {{ isset($subCategory) && $subCategory->sub_cat_status ? 'checked' : '' }}>
             <!-- <input type="checkbox" name="cat_status" value="1" checked> -->
             <span class="slider"></span>
         </label>
@@ -67,19 +68,27 @@
 
 <div class="footer">
     <!-- <i class="fas fa-trash delete-icon" onclick="openDeletePopup()"></i> -->
-    @if(isset($category))
+    @if(isset($subCategory))
         <i class="fas fa-trash delete-icon" onclick="openDeletePopup()"></i>
     @endif
     <div class="footer-right">
         <button type="button" class="btn btn-cancel" onclick="window.location='{{ url('/admin/menu') }}'">Cancel</button>
-        <button type="submit" class="btn btn-save">{{ isset($category) ? 'Update' : 'Save' }}</button>
+        <button type="submit" class="btn btn-save">{{ isset($subCategory) ? 'Update' : 'Save' }}</button>
     </div>
 </div>
 
 </form>
-@if(session('success'))
+
+@if (session('success'))
     <div id="successMessage" class="success-msg">
-        <i class="fa-solid fa-circle-check"></i> {{ session('success') }}
+        <i class="fa-solid fa-circle-check"></i>
+        {{ session('success') }}
+    </div>
+
+@elseif ($errors->any())
+    <div id="errorMessage" class="error-msg">
+        <i class="fa-solid fa-circle-xmark"></i>
+        {{ $errors->first() }}
     </div>
 @endif
 
@@ -88,16 +97,16 @@
 </div> -->
 
 <!-- DELETE CONFIRM MODAL -->
- @if(isset($category))
+ @if(isset($subCategory))
 <div id="deletePopup" style="display:none;">
     <div class="popup-overlay"></div>
     <div class="popup-box">
         <h3>Are you sure?</h3>
-        <p>You want to delete this category.</p>
+        <p>You want to delete this sub category.</p>
         <div class="popup-buttons">
             <button class="btn btn-cancel" onclick="closeDeletePopup()">Cancel</button>
             <form method="POST"
-                  action="{{ route('categories.destroy', $category->cat_id) }}">
+                  action="{{ route('subCategories.destroy', $subCategory->sub_cat_id) }}">
                 @csrf
                 @method('DELETE')
                 <button class="btn btn-save">Delete</button>
@@ -143,6 +152,17 @@
             setTimeout(() => msg.remove(), 500);
         }
     }, 3000);
+
+
+    setTimeout(() => {
+        const err = document.getElementById('errorMessage');
+        if (err) {
+            err.style.transition = "all 0.5s ease";
+            err.style.opacity = 0;
+            err.style.transform = "translate(-50%, -20px)";
+            setTimeout(() => err.remove(), 500);
+        }
+    }, 4000);
 </script>
 
 </body>

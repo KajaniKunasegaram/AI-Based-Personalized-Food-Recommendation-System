@@ -302,7 +302,7 @@
                         </li>
                     </a>
 
-                    <a href="{{url('admin/delivery-configuration')}}" class="text-decoration-none">
+                    <a href="{{url('admin/delivery-config')}}" class="text-decoration-none">
                         <li class="list-group-item d-flex align-items-center custom-border">
                             <i class="bi bi-truck me-2"></i>Delivery Configuration
                         </li>
@@ -352,7 +352,7 @@
                         </li>
                     </a> -->
 
-                    <a href="{{url('admin/orders')}}" class="text-decoration-none">
+                    <a href="{{url('admin/settings')}}" class="text-decoration-none">
                         <li class="list-group-item d-flex align-items-center custom-border">
                             <i class="bi bi-gear me-2"></i> Settings
                         </li>
@@ -365,13 +365,13 @@
                     </li>
 
                     <div id="moreContent" class="more-content">
-                        <a href="{{url('admin/orders')}}" class="text-decoration-none">
+                        <a href="{{url('admin/support')}}" class="text-decoration-none">
                             <li class="list-group-item d-flex align-items-center custom-border text-decoration-none" >
                                 <i class="bi bi-headset me-2"></i>Support
                             </li>
                         </a>
     
-                        <a href="{{url('admin/orders')}}" class="text-decoration-none">
+                        <a href="{{url('admin/terms-and-policy')}}" class="text-decoration-none">
                             <li class="list-group-item d-flex align-items-center custom-border">
                                 <i class="bi bi-file-earmark-lock me-2"></i> Terms & Policy
                             </li>

@@ -34,37 +34,34 @@
 <div class="category-box">
     <!-- Category Row -->
      <h3>Categories</h3>
+     @forelse($categories as $category)
+        <div class="category-rows">
+            <span class="cat-name">{{ $category->cat_name }}</span>
+
+            <div class="cat-actions">
+                
+                <button class="btn btn-outline-secondary btn-sm" 
+                 onclick="window.location='{{ route('categories.edit', $category->cat_id) }}'">
+                    Edit
+                </button>
+            </div>
+        </div>
+    @empty
+        <p class="text-muted">No categories found</p>
+    @endforelse
+<!-- 
     <div class="category-rows">
         <span class="cat-name">abc</span>
 
         <div class="cat-actions">
-            <!-- <button class="btn btn-outline-secondary btn-sm">Edit Category</button> -->
-            <!-- <button onclick="openAddCategoryModal()" class="btn btn-outline-success btn-sm">+ Add SubCategory</button> -->
+            <button class="btn btn-outline-secondary btn-sm">Edit Category</button>
+            <button onclick="openAddCategoryModal()" class="btn btn-outline-success btn-sm">+ Add SubCategory</button>
         </div>
-    </div>
+    </div> -->
 
-    <div class="category-rows">
-        <span class="cat-name">abc</span>
-
-        <div class="cat-actions">
-            <!-- <button class="btn btn-outline-secondary btn-sm">Edit Category</button> -->
-            <!-- <button onclick="openAddCategoryModal()" class="btn btn-outline-success btn-sm">+ Add SubCategory</button> -->
-        </div>
-    </div>
-
-    <div class="category-rows">
-        <span class="cat-name">abc</span>
-
-        <div class="cat-actions">
-            <!-- <button class="btn btn-outline-secondary btn-sm">Edit Category</button> -->
-            <!-- <button onclick="openAddCategoryModal()" class="btn btn-outline-success btn-sm">+ Add SubCategory</button> -->
-        </div>
-    </div>
+ 
 </div>
 
-
-
-<!-- Add Category Model -->
 
   
 
