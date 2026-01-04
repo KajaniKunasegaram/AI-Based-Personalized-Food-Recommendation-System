@@ -9,6 +9,13 @@ use App\Http\Controllers\ModifierGroupController;
 use App\Http\Controllers\Admin\MenuLoaderController;
 use App\Http\Controllers\Admin\DeliveryController;
 use App\Http\Controllers\ModifierController;
+use App\Http\Controllers\Client\CartController;
+use App\Http\Controllers\Client\AuthController;
+use App\Http\Controllers\Client\CustomerController;
+use App\Http\Controllers\Client\PaymentController;
+
+use App\Http\Controllers\Client\OrderController;
+
 
 
 use App\Models\CategoryModel;
@@ -46,18 +53,6 @@ Route::post('/shifts', [BusinessHoursController::class, 'store'])->name('store')
 Route::put('/shifts/{shift}', [BusinessHoursController::class, 'update'])->name('update');
 Route::delete('/shifts/{shift}', [BusinessHoursController::class, 'destroy'])->name('destroy');
 
-
-
-/* Menu AJAX Loader */
-// Route::get('/admin/menus/load/{page}', function ($page) {
-
-//     if ($page === 'menus') {
-//         $categories = CategoryModel::orderBy('cat_id','desc')->get();
-//         return view('admin.menus.menus', compact('categories'));
-//     }
-
-//     return view("admin.menus.$page");
-// });
 
 Route::get('/admin/menus/load/{page}',
     [MenuLoaderController::class, 'load']
@@ -97,38 +92,6 @@ Route::prefix('admin/items')->group(function () {
 Route::post('/admin/items/{id}/status',[ItemController::class, 'updateStatus'])->name('items.status');
 
 
-
-
-// Route::get('/admin/menus/load/{page}', function ($page) {
-
-//     if ($page === 'modifier-groups') {
-//         $groups = ModifierGroupModel::all();
-//         return view("admin.menus.$page", compact('groups'));
-//     }
-
-//     return view("admin.menus.$page");
-// });
-
-// Route::get(
-//     '/admin/menus/load/{page}',
-//     [MenuLoaderController::class, 'load']
-// );
-
-// Route::get('/admin/modifier-groups',
-//     [ModifierGroupController::class, 'index']
-// )->name('modifier-groups.index');
-
-// Route::get('/admin/menus/load/{page}', function ($page) {
-
-//     if ($page === 'modifier-groups') {
-//         $groups = ModifierGroupModel::all();
-//         return view("admin.menus.$page", compact('groups'));
-//     }
-
-//     return view("admin.menus.$page");
-// });
-
-
 Route::prefix('admin/modifier-groups')->group(function () {
     Route::get('/', [ModifierGroupController::class, 'index'])->name('modifier-groups.index');
     Route::get('/create', [ModifierGroupController::class, 'create'])->name('modifier-groups.create');
@@ -144,53 +107,6 @@ Route::prefix('admin/modifiers')->group(function () {
     Route::post('/update/{id}', [ModifierController::class, 'update'])->name('modifiers.update');
     Route::delete('/destroy/{id}', [ModifierController::class, 'destroy'])->name('modifiers.destroy');
 });
-// Route::prefix('admin')->group(function () {
-// // MODIFIER GROUPS
-
-//     // List page
-//     Route::get('/modifier-groups',
-//         [ModifierGroupController::class, 'index']
-//     )->name('modifier-groups.index');
-
-//     // Add view
-//     Route::get('/modifier-groups/create',
-//         [ModifierGroupController::class, 'create']
-//     )->name('modifier-groups.create');
-
-//     // Store
-//     Route::post('/modifier-groups/store',
-//         [ModifierGroupController::class, 'store']
-//     )->name('modifier-groups.store');
-
-//     // Edit view
-//     Route::get('/modifier-groups/edit/{id}',
-//         [ModifierGroupController::class, 'edit']
-//     )->name('modifier-groups.edit');
-
-//     // Update
-//     Route::post('/modifier-groups/update/{id}',
-//         [ModifierGroupController::class, 'update']
-//     )->name('modifier-groups.update');
-
-// });
-
-
-
-// Route::prefix('admin')->group(function () {
-
-//     Route::post('/modifiers/store',
-//         [ModifierController::class, 'store']
-//     )->name('modifiers.store');
-
-//     Route::post('/modifiers/update/{id}',
-//         [ModifierController::class, 'update']
-//     )->name('modifiers.update');
-
-//     Route::delete('/modifiers/delete/{id}',
-//         [ModifierController::class, 'destroy']
-//     )->name('modifiers.delete');
-
-// });
 
 
 
@@ -203,5 +119,50 @@ Route::prefix('admin')->group(function () {
 });
 
 /* Client */
-Route::get('client/orders', fn() => view('client.orders'));
+Route::get('client/orders', [OrderController::class, 'index'])->name('orders');
+Route::get('client/item/{id}', [OrderController::class, 'getItem']);
+
 Route::get('client/layout', fn() => view('client.layout'));
+
+Route::get('/checkout', [CartController::class, 'view'])->name('checkout');
+Route::post('/cart/save', [CartController::class, 'save'])->name('cart.save');
+
+
+
+Route::post('/stripe/create-session', [PaymentController::class, 'createSession'])->name('stripe.session');
+Route::get('/stripe/success', [PaymentController::class, 'success'])->name('stripe.success');
+Route::get('/stripe/cancel', [PaymentController::class, 'cancel'])->name('stripe.cancel');
+
+
+Route::get('/review', function() {
+    return view('client.review'); // Make sure the blade file is review.blade.php
+})->name('review');
+
+Route::get('/about', function() {
+    return view('client.about'); // Make sure the blade file is review.blade.php
+})->name('about');
+
+Route::get('/contact', function() {
+    return view('client.contact'); // Make sure the blade file is review.blade.php
+})->name('contact');
+
+// Route::get('/login', function () {
+//     return view('client.login');
+// })->name('login');
+
+
+// Route::get('/register', function () {
+//     return view('client.register');
+// })->name('register');
+
+
+
+// Route::get('/register', [CustomerController::class, 'showRegister'])->name('register');
+// Route::post('/register', [CustomerController::class, 'register'])->name('register.post');
+
+// Route::get('/login', [CustomerController::class, 'showLogin'])->name('login');
+// Route::post('/login', [CustomerController::class, 'login'])->name('login.post');
+
+// Route::get('/checkout', function () {
+//     return view('client.checkout');
+// })->name('checkout');

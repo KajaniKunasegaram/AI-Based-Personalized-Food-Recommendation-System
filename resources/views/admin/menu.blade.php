@@ -119,7 +119,7 @@
                 <li class="list-group-item" data-target="items">Items</li>
                 <li class="list-group-item" data-target="modifier-groups">Modifier Groups</li>
                 <li class="list-group-item" data-target="modifiers">Modifiers</li>
-                <li class="list-group-item" data-target="item-out-of-stock">Item Out Of Stock</li>
+                <!-- <li class="list-group-item" data-target="item-out-of-stock">Item Out Of Stock</li> -->
             </ul>
         </div>
 

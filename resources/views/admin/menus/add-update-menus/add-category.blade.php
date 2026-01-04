@@ -57,7 +57,10 @@
     <div class="form-group1">
         <label>Status</label>
         <label class="switch">
-            <input type="checkbox" name="cat_status" value="1" {{ isset($category) && $category->cat_status ? 'checked' : '' }}>
+            <input type="checkbox" name="cat_status" 
+            value="1" 
+            {{ (!isset($category) || $category->cat_status == 1) ? 'checked' : '' }}>
+            <!-- {{ isset($category) && $category->cat_status ? 'checked' : '' }}> -->
             <!-- <input type="checkbox" name="cat_status" value="1" checked> -->
             <span class="slider"></span>
         </label>

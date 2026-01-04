@@ -44,10 +44,21 @@
         <div class="form-group1">
             <label>Allow multiple modifiers</label>
             <label class="switch">
-                <input type="checkbox" name="status" value="1" {{ $mode=='edit' && $group->status ? 'checked' : '' }}>
+                <input type="checkbox"
+                    name="status"
+                    value="1"
+                    {{ ($mode != 'edit' || $group->status == 1) ? 'checked' : '' }}>
                 <span class="slider"></span>
             </label>
         </div>
+        <!-- <div class="form-group1">
+            <label>Allow multiple modifiers</label>
+            <label class="switch">
+                <input type="checkbox" name="status" value="1" 
+                {{ $mode=='edit' && $group->status ? 'checked' : '' }}>
+                <span class="slider"></span>
+            </label>
+        </div> -->
 
         <div style="width: 100%; margin-top:10px; background: white; border:1px solid lightgray; padding: 10px; display: flex; justify-content: space-between; align-items: center;">
             
@@ -211,7 +222,7 @@
         this.submit();
     });
 
-     document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function() {
         const alert = document.getElementById('successAlert');
         if(alert) {
             setTimeout(() => {

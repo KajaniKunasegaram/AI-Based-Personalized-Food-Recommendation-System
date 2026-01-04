@@ -21,4 +21,15 @@ class ModifierGroupModel extends Model
     {
         return $this->hasMany(ModifierModel::class, 'modifier_group_id');
     }
+
+
+    public function items()
+    {
+        return $this->belongsToMany(
+            ItemModel::class,
+            'tbl_item_modifier_group',
+            'modifier_group_id',
+            'item_id'
+        );
+    }
 }

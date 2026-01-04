@@ -43,10 +43,9 @@
             <div class="cat-actions">
                 <span class="price-edit">£{{ number_format($modifier->price, 2) }}</span>
 
-                <button class="btn btn-outline-secondary btn-sm"
-                       >
+                <!-- <button class="btn btn-outline-secondary btn-sm">
                     Edit
-                </button>
+                </button> -->
 
                 <form method="POST" action="{{ route('modifiers.destroy', $modifier->id) }}" style="display:inline-block">
                     @csrf

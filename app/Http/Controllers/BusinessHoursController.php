@@ -15,8 +15,7 @@ class BusinessHoursController
         foreach ($days as $day) {
             $shiftsData[$day] = BusinessHoursModel::where('day_of_week', $day)->get();
         }
-
-        
+       
 
        return view('admin.business-hours',compact('days','shiftsData'));
     }

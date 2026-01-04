@@ -30,9 +30,9 @@ class ItemModel extends Model
     {
         return $this->belongsToMany(
             ModifierGroupModel::class,
-            'tbl_item_modifier_groups',
+            'tbl_item_modifier_group',
             'item_id',
             'modifier_group_id'
-        )->withPivot('required');
+        );
     }
 }

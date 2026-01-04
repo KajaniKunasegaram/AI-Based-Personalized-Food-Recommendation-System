@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tbl_modifiers_group', function (Blueprint $table) {
-             $table->id;
+             $table->id();
             $table->string('group_name');
             $table->tinyInteger('min_select')->default(0);
             $table->tinyInteger('max_select')->default(0);

@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tbl_categories', function (Blueprint $table) {
-            $table->id('cat_id');
-            $table->string('cat_name');
-            $table->text('cat_description');
-            $table->string('cat_image');
-            $table->boolean('cat_status')->default(true);
+        Schema::create('tbl_customer', function (Blueprint $table) {
+                 $table->id();
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->string('password');
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tbl_categories');
+        Schema::dropIfExists('tbl_customer');
     }
 };
