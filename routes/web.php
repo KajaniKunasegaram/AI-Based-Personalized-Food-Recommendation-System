@@ -6,13 +6,18 @@ use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ModifierGroupController;
+use App\Http\Controllers\ModifierController;
+use App\Http\Controllers\ReviewController;
+
 use App\Http\Controllers\Admin\MenuLoaderController;
 use App\Http\Controllers\Admin\DeliveryController;
-use App\Http\Controllers\ModifierController;
+
+
 use App\Http\Controllers\Client\CartController;
 use App\Http\Controllers\Client\AuthController;
 use App\Http\Controllers\Client\CustomerController;
 use App\Http\Controllers\Client\PaymentController;
+use App\Http\Controllers\Client\ContactController;
 
 use App\Http\Controllers\Client\OrderController;
 
@@ -38,12 +43,19 @@ Route::get('admin/take-payment', fn() => view('admin.take-payment'));
 Route::get('admin/website-status', fn() => view('admin.website-status'));
 Route::get('admin/customers', fn() => view('admin.customers'));
 
-Route::get('admin/reviews', fn() => view('admin.reviews'));
+// Route::get('admin/reviews', fn() => view('admin.reviews'));
 Route::get('admin/billing', fn() => view('admin.billing'));
 Route::get('admin/reports', fn() => view('admin.reports'));
 Route::get('admin/support', fn() => view('admin.support'));
 Route::get('admin/settings', fn() => view('admin.settings'));
 Route::get('admin/terms-and-policy', fn() => view('admin.terms-and-policy'));
+
+// Admin reviews list
+Route::get('admin/reviews', [ReviewController::class, 'indexAdmin'])->name('admin.reviews');
+Route::delete('admin/reviews/{id}', [ReviewController::class, 'destroy'])->name('admin.reviews.delete');
+
+
+
 
 /*  Business Hours */
 Route::get('admin/business-hours', [BusinessHoursController::class, 'index'])
@@ -134,17 +146,32 @@ Route::get('/stripe/success', [PaymentController::class, 'success'])->name('stri
 Route::get('/stripe/cancel', [PaymentController::class, 'cancel'])->name('stripe.cancel');
 
 
-Route::get('/review', function() {
-    return view('client.review'); // Make sure the blade file is review.blade.php
-})->name('review');
+Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews');
+Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+
+// Route::get('/review', function() {
+//     return view('client.review'); // Make sure the blade file is review.blade.php
+// })->name('review');
 
 Route::get('/about', function() {
     return view('client.about'); // Make sure the blade file is review.blade.php
 })->name('about');
 
-Route::get('/contact', function() {
-    return view('client.contact'); // Make sure the blade file is review.blade.php
-})->name('contact');
+Route::get('/more', function() {
+    return view('client.more'); // Make sure the blade file is review.blade.php
+})->name('more');
+
+// Route::get('/contact', function() {
+//     return view('client.contact'); // Make sure the blade file is review.blade.php
+// })->name('contact');
+
+
+// Contact Page
+// Route::get('client/contact', fn() => view('client.contact'))->name('client.contact');
+Route::post('client/contact-submit', [ContactController::class, 'submit'])->name('client.contact.submit');
+
+Route::get('client/contact', [ContactController::class, 'index'])->name('client.contact');
+
 
 // Route::get('/login', function () {
 //     return view('client.login');

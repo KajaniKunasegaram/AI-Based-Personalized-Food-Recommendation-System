@@ -1,0 +1,177 @@
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+    background: #f6f6f6;
+}
+
+/* PAGE GRID */
+.page {
+    display: grid;
+    grid-template-columns: 300px 1fr; /* LEFT | RIGHT */
+    gap: 40px;
+    padding: 60px 80px;   /* ullukkaja spacing */
+}
+
+/* SIDEBAR */
+.sidebar {
+    background: #fff;
+    border-radius: 18px;
+    padding: 30px 25px;
+    height: fit-content;
+}
+
+/* USER INFO */
+.user-box {
+    margin-bottom: 30px;
+}
+
+.user-box strong {
+    font-size: 18px;
+    display: block;
+}
+
+.user-box span {
+    font-size: 13px;
+    color: #888;
+}
+
+/* MENU */
+.menu {
+    list-style: none;
+}
+
+.menu li {
+    padding: 14px 18px;
+    margin-bottom: 8px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.menu li:hover {
+    background: #f3f3f3;
+}
+
+.menu .active {
+    background: #fff1f1;
+    color: #e53935;
+    font-weight: 600;
+}
+
+.logout {
+    color: #e53935;
+}
+
+/* DIVIDER */
+.divider {
+    height: 1px;
+    background: #eee;
+    margin: 30px 0;
+}
+
+/* RIGHT CONTENT */
+.content {
+    background: transparent;
+}
+
+/* TITLE */
+.content h2 {
+    font-size: 22px;
+    margin-bottom: 30px;
+}
+
+/* CARD */
+.card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 35px;
+    margin-bottom: 30px;
+}
+
+/* FORM GRID */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2 inputs side by side */
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.form-group {
+    width: 100%;
+}
+
+label {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 8px;
+    display: block;
+}
+
+input {
+    width: 100%;
+    padding: 13px 15px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+}
+
+input:focus {
+    outline: none;
+    border-color: #e53935;
+}
+
+/* OFFERS */
+.offers {
+    padding: 10px 5px 30px;
+}
+
+.offers p {
+    font-size: 13px;
+    color: #999;
+    margin-bottom: 12px;
+}
+
+.offers label {
+    margin-right: 30px;
+    font-size: 14px;
+}
+
+/* ADVANCED */
+.advanced {
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+}
+
+.advanced-item {
+    padding: 16px 0;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
+
+.advanced-item:last-child {
+    border-bottom: none;
+}
+
+.delete {
+    color: #e53935;
+    font-weight: 600;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+    .page {
+        grid-template-columns: 1fr;
+        padding: 30px 20px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}

@@ -88,10 +88,10 @@
                 <img src="/images/logo.png" alt="Logo">
             </div>
             <div class="nav-items">
-                <a href="/order"><i class="fa-solid fa-cart-shopping"></i> Order</a>
+                <a href="{{route('orders')}}"><i class="fa-solid fa-cart-shopping"></i> Order</a>
                 <a href="/about"><i class="fa-solid fa-circle-info"></i> About</a>
-                <a href="/contact"><i class="fa-solid fa-phone"></i> Contact</a>
-                <a href="/review"><i class="fa-solid fa-star"></i> Review</a>
+                <a href="{{ route('client.contact') }}"><i class="fa-solid fa-phone"></i> Contact</a>
+                <a href="{{ route('reviews') }}"><i class="fa-solid fa-star"></i> Review</a>
                 <a href="/more"><i class="fa-solid fa-ellipsis"></i> More</a>
             </div>
         </div>

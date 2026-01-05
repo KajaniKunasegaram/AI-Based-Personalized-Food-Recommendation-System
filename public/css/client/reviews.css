@@ -1,0 +1,219 @@
+/* Page container */
+.reviews-container {
+    width:80%;
+    margin: 40px auto;
+    padding: 20px;
+    font-family: 'Poppins', sans-serif;
+    height: 80%;
+}
+
+.page-title {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 28px;
+}
+
+/* GRID */
+.reviews-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* LEFT bigger, RIGHT smaller */
+    gap: 30px;
+}
+
+/* LEFT & RIGHT cards */
+.reviews-list,
+.review-form {
+    background: #fff;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+    position: relative;
+    height:65vh;
+    overflow-y: auto; 
+}
+
+/* Gradient top border */
+.reviews-list::before,
+.review-form::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 5px;
+    width: 100%;
+    background: linear-gradient(90deg, #ff9800, #ff5722);
+    border-radius: 16px 16px 0 0;
+}
+
+/* Review item */
+.review-item {
+    background: #e6e3e3;
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 18px;
+    transition: 0.3s;
+}
+
+.review-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.review-item p {
+    margin: 12px 0;
+    color: #555;
+}
+
+.review-item small {
+    color: #999;
+}
+
+/* Stars */
+.rating {
+    color: #ff9800;
+    font-size: 15px;
+}
+
+/* Form */
+.review-form input,
+.review-form select,
+.review-form textarea {
+    width: 100%;
+    padding: 12px 14px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
+
+.review-form textarea {
+    min-height: 120px;
+    resize: none;
+}
+
+.review-form button {
+    width: 100%;
+    padding: 14px;
+    background: #D32F2F;
+    color: #fff;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.review-form button:hover {
+    transform: translateY(-2px);
+    /* box-shadow: 0 10px 25px rgba(255, 87, 34, 0.4); */
+}
+
+/* Success */
+.success {
+    max-width: 600px;
+    margin: 0 auto 20px;
+    text-align: center;
+    background: #d4edda;
+    padding: 12px;
+    border-radius: 10px;
+    color: #155724;
+}
+
+.reviews-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.reviews-header h2 {
+    font-size: 28px;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Order Button */
+.order-btn {
+    padding: 12px 24px;
+    background: #D32F2F;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 30px;
+    transition: 0.3s;
+}
+
+.order-btn:hover {
+    transform: translateY(-2px);
+    background: #d21010;
+}
+
+.review-summary {
+    /* background: linear-gradient(135deg, #fff7f0, #ffffff); */
+    background: #ded9d9;
+    padding: 20px;
+    border-radius: 14px;
+    margin-bottom: 20px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+}
+
+.summary-stars {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+    color: #28A745;
+}
+
+.summary-stars .avg {
+    font-size: 36px;
+    font-weight: 700;
+    color: #28A745;
+}
+
+.summary-stars .stars {
+    font-size: 20px;
+    color: #ff9800;
+}
+
+.summary-text {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #666;
+}
+/* Optional: nice scroll style */
+.reviews-list::-webkit-scrollbar,
+.review-form::-webkit-scrollbar {
+    width: 6px;
+}
+
+.reviews-list::-webkit-scrollbar-thumb,
+.review-form::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,0.2);
+    border-radius: 3px;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+    .reviews-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+}
+
+
+/* Mobile responsive */
+@media (max-width: 900px) {
+    .reviews-grid {
+        grid-template-columns: 1fr;
+    }
+}
