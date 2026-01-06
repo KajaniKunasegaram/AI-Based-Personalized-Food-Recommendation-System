@@ -27,7 +27,7 @@
         
     <div class="payment-options">
 
-        <label class="payment-option active">
+        <label class="payment-option">
             <input type="radio" name="payment_type" value="card" checked>
             <span><i class="fa-solid fa-credit-card"></i> Card</span>
         </label>
@@ -39,10 +39,12 @@
 
     </div>
 
-        
         <button class="pay-btn" id="payBtn">
-            PAY £{{ number_format($total,2) }}
+            PAY £0.00
         </button>
+        <!-- <button class="pay-btn" id="payBtn">
+            PAY £{{ number_format($total,2) }}
+        </button> -->
 
     </div>
 
@@ -69,22 +71,40 @@
             </label>
 
         </div>
-
-        @foreach($cart as $item)
-            <div class="basket-item">
+        @foreach($cart as $index => $item)
+            <div class="basket-item" onclick="openQtyPopup({{ $index }})">
 
                 <div class="item-row">
                     <span class="qty">{{ $item['qty'] }}x</span>
                     <span class="item-name">{{ $item['name'] }}</span>
                     <span class="item-price">£{{ number_format($item['total'],2) }}</span>
+
+                    <!-- DELETE ITEM -->
+                     <button class="delete-item"
+                        onclick="event.stopPropagation(); deleteItem({{ $index }})">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                        <!-- <button class="delete-item" onclick="deleteItem({{ $index }})">
+                        <i class="fa-solid fa-trash"></i>
+                    </button> -->
                 </div>
 
                 @if(!empty($item['modifiers']))
                     <div class="modifier-list">
-                        @foreach($item['modifiers'] as $mod)
+                        @foreach($item['modifiers'] as $mIndex => $mod)
                             <div class="modifier">
                                 + {{ $mod['name'] }}
                                 <span>£{{ number_format($mod['price'],2) }}</span>
+
+                                <!-- DELETE MODIFIER -->
+                                 <button class="delete-modifier"
+                                    onclick="event.stopPropagation(); deleteModifier({{ $index }}, {{ $mIndex }})">
+                                    ✕
+                                </button>
+                                <!-- <button class="delete-modifier"
+                                    onclick="deleteModifier({{ $index }}, {{ $mIndex }})">
+                                    ✕
+                                </button> -->
                             </div>
                         @endforeach
                     </div>
@@ -96,30 +116,56 @@
         <div class="bill-details">
             <div class="bill-row">
                 <span>Sub Total</span>
-                <span>£10</span>
+                <span id="subTotal">£{{ $total }}</span>
             </div>
 
             <div class="bill-row">
                 <span>Service Charge</span>
-                <span>£20</span>
+                <span id="serviceCharge">£1</span>
             </div>
 
-            <div class="bill-row">
+            <div class="bill-row" id="deliveryChargeRow">
                 <span>Delivery Charge</span>
-                <span>£30</span>
+                <span id="deliveryCharge">£2</span>
             </div>
 
             <hr>
 
             <div class="bill-row total">
                 <span>Total</span>
-                <span>£20</span>
+                <span id="finalTotal">£{{ $total + 1 + 2 }}</span>
             </div>
         </div>
 
     </div>
 
 </div>
+
+
+
+<div class="qty-modal" id="qtyModal">
+    <div class="qty-popup">
+
+            <button class="close-icon" onclick="closeQtyPopup()">✕</button>
+
+        <h3 id="popupItemName"></h3>
+        <p id="popupItemPrice"></p>
+
+        <div class="qty-controls">
+            <button onclick="changeQty(-1)">−</button>
+            <span id="popupQty">1</span>
+            <button onclick="changeQty(1)">+</button>
+        </div>
+
+        <button class="update-btn" onclick="updateQty()">
+            Update
+        </button>
+
+        <!-- <button class="close-btn" onclick="closeQtyPopup()">Cancel</button> -->
+
+    </div>
+</div>
+
 
 <!-- ADDRESS MODAL -->
 <div class="address-modal" id="addressModal">
@@ -307,6 +353,188 @@
         modal.style.display = 'none';
     }
 
+
+
+</script>
+
+<script>
+    const cart = @json($cart);
+
+    const SERVICE_CHARGE = 1;
+    const DELIVERY_CHARGE = 2;
+
+    const subTotalEl = document.getElementById('subTotal');
+    const serviceChargeEl = document.getElementById('serviceCharge');
+    const deliveryChargeEl = document.getElementById('deliveryCharge');
+    const finalTotalEl = document.getElementById('finalTotal');
+    const deliveryChargeRow = document.getElementById('deliveryChargeRow');
+
+    /* ---------------- Calculate Cart Total (Items + Modifiers) ---------------- */
+    function calculateSubTotal() {
+        let subTotal = 0;
+
+        cart.forEach(item => {
+            // item total (already qty * base price)
+            subTotal += parseFloat(item.total);
+
+            // modifier prices
+            if (item.modifiers && item.modifiers.length > 0) {
+                item.modifiers.forEach(mod => {
+                    subTotal += parseFloat(mod.price);
+                });
+            }
+        });
+
+        return subTotal;
+    }
+
+    /* ---------------- Final Total Calculation ---------------- */
+    function calculateFinalTotal() {
+        const subTotal = calculateSubTotal();
+
+        let total = subTotal + SERVICE_CHARGE;
+
+        if (deliveryChargeRow.style.display !== 'none') {
+            total += DELIVERY_CHARGE;
+        }
+        const formattedTotal = total.toFixed(2);
+
+        subTotalEl.innerText = `£${subTotal.toFixed(2)}`;
+        serviceChargeEl.innerText = `£${SERVICE_CHARGE.toFixed(2)}`;
+        deliveryChargeEl.innerText = `£${DELIVERY_CHARGE.toFixed(2)}`;
+        finalTotalEl.innerText = `£${formattedTotal}`;
+
+            // 🔥 UPDATE PAY BUTTON ALSO
+        payBtn.innerText = `PAY £${formattedTotal}`;
+        
+        localStorage.setItem('final_total', formattedTotal);
+    }
+
+    /* ---------------- Delivery / Pickup Toggle ---------------- */
+    function updateOrderType(type) {
+        if (type === 'delivery') {
+            deliveryChargeRow.style.display = 'flex';
+        } else {
+            deliveryChargeRow.style.display = 'none';
+        }
+        calculateFinalTotal();
+    }
+
+    /* ---------------- Restore on Refresh ---------------- */
+    window.addEventListener('load', () => {
+        const savedOrderType = localStorage.getItem('order_type') || 'delivery';
+        document.querySelector(`input[name="order_type"][value="${savedOrderType}"]`).checked = true;
+        updateOrderType(savedOrderType);
+
+        calculateFinalTotal();
+    });
+
+    document.querySelectorAll('input[name="order_type"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            localStorage.setItem('order_type', e.target.value);
+            updateOrderType(e.target.value);
+        });
+    });
+</script>
+
+<script>
+    function deleteItem(index){
+        if(!confirm('Remove this item?')) return;
+
+        fetch('{{ route("cart.item.delete") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ index })
+        })
+        .then(res => res.json())
+        .then(() => location.reload());
+    }
+
+    function deleteModifier(itemIndex, modifierIndex){
+        fetch('{{ route("cart.modifier.delete") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ itemIndex, modifierIndex })
+        })
+        .then(res => res.json())
+        .then(() => location.reload());
+    }
+</script>
+
+<script>
+    let currentIndex = null;
+    let currentQty = 1;
+
+   function openQtyPopup(index){
+        const item = cart[index];
+
+        currentIndex = index;
+        currentQty = item.qty;
+
+        const unitPrice = item.total / item.qty;
+
+        document.getElementById('popupItemName').innerText = item.name;
+        document.getElementById('popupItemPrice').innerText =
+            `£${unitPrice.toFixed(2)}`;
+
+        document.getElementById('popupQty').innerText = currentQty;
+
+        document.getElementById('qtyModal').style.display = 'flex';
+    }
+
+    function closeQtyPopup(){
+        document.getElementById('qtyModal').style.display = 'none';
+    }
+
+    function changeQty(change){
+        currentQty = Math.max(1, currentQty + change);
+        document.getElementById('popupQty').innerText = currentQty;
+    }
+
+    function updateQty(){
+        fetch('{{ route("cart.update.qty") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                index: currentIndex,
+                qty: currentQty
+            })
+        })
+        .then(res => res.json())
+        .then(() => location.reload());
+    }
+</script>
+
+<script>
+    payBtn.addEventListener('click', () => {
+        const total = localStorage.getItem('final_total');
+
+        fetch('{{ route("stripe.session") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                cart,
+                total
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            const stripe = Stripe('{{ env("STRIPE_KEY") }}');
+            stripe.redirectToCheckout({ sessionId: data.id });
+        });
+    });
 </script>
 
 @endsection

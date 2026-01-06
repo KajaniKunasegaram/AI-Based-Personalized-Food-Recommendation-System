@@ -138,7 +138,11 @@ Route::get('client/layout', fn() => view('client.layout'));
 
 Route::get('/checkout', [CartController::class, 'view'])->name('checkout');
 Route::post('/cart/save', [CartController::class, 'save'])->name('cart.save');
+Route::post('/cart/update-qty', [CartController::class, 'updateQty'])->name('cart.update.qty');
 
+
+Route::post('/cart/item/delete', [CartController::class, 'deleteItem'])->name('cart.item.delete');
+Route::post('/cart/modifier/delete', [CartController::class, 'deleteModifier'])->name('cart.modifier.delete');
 
 
 Route::post('/stripe/create-session', [PaymentController::class, 'createSession'])->name('stripe.session');
@@ -173,14 +177,16 @@ Route::post('client/contact-submit', [ContactController::class, 'submit'])->name
 Route::get('client/contact', [ContactController::class, 'index'])->name('client.contact');
 
 
-// Route::get('/login', function () {
-//     return view('client.login');
-// })->name('login');
+Route::get('/login', function () {
+    return view('client.login');
+})->name('login');
 
 
-// Route::get('/register', function () {
-//     return view('client.register');
-// })->name('register');
+Route::get('/register', function () {
+    return view('client.register');
+})->name('register');
+
+Route::post('/customer/register', [CustomerController::class, 'register'])->name('customer.register');
 
 
 

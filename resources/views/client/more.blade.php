@@ -1,88 +1,140 @@
 
+
 @extends('client.layout')
 
 @section('content')
+<link rel="stylesheet" href="{{ asset('css/client/more.css') }}">
 
-
-    <link rel="stylesheet" href="{{ asset('css/client/more.css') }}">
-
-
-<div class="page">
+<div class="main">
 
     <!-- LEFT SIDEBAR -->
-    <aside class="sidebar">
-        <div class="user-box">
-            <strong>kajanii</strong>
-            <span>officialcarparking2025@gmail.com</span>
+    <section >
+        <div class="side">
+
+            <div class="user-box"> 
+                <strong>kajanii</strong> <span>officialcarparking2025@gmail.com</span>
+            </div>
+            <ul>
+                <li class="active" onclick="showSection('profile')">My Account</li>
+                <li onclick="showSection('support')">Need Help</li>
+                <li onclick="showSection('allergy')">Allergy Information</li>
+                <li onclick="showSection('delete')">Delete Account</li>
+                <li onclick="logout()">Logout</li>
+            </ul>
         </div>
-
-        <ul class="menu">
-            <li class="active">Profile</li>
-            <li>Address Book</li>
-            <li>Saved Cards</li>
-        </ul>
-
-        <div class="divider"></div>
-
-        <ul class="menu">
-            <li>English (United Kingdom)</li>
-            <li>Support</li>
-            <li>Allergy Information</li>
-            <li class="logout">Logout</li>
-        </ul>
-    </aside>
+    </section>
 
     <!-- RIGHT CONTENT -->
-    <main class="content">
-        <h2>ACCOUNT</h2>
+    <div class="wrapper">
 
-        <div class="card">
-            <div class="form-row">
-                <div class="form-group">
-                    <label>First Name</label>
-                    <input type="text" value="kajanii">
-                </div>
-                <div class="form-group">
-                    <label>Last Name</label>
-                    <input type="text">
-                </div>
+        <!-- PROFILE -->
+        <section class="card profile-card section" id="profile">
+            <div class="card-header">
+                <h2>My Account</h2>
+                <p>Manage your personal information</p>
             </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Phone no</label>
-                    <input type="text" placeholder="+44">
+            <div class="profile-info">
+                <div>
+                    <label>Name</label>
+                    <input type="text" value="Kajanii" readonly>
                 </div>
-                <div class="form-group">
+                <div>
                     <label>Email</label>
-                    <input type="email" value="officialcarparking2025@gmail.com">
+                    <input type="email" value="kajanii.co.uk" readonly>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div class="offers">
-            <p>RECEIVE OFFERS FROM USA FRIED CHICKEN THROUGH</p>
-            <label><input type="checkbox"> Email</label>
-            <label><input type="checkbox"> SMS</label>
-        </div>
+        <!-- SUPPORT -->
+        <section class="support-section section" id="support">
+            <h2 class="support-title">Need Help?</h2>
+            <p class="support-sub">Our team is always ready to support you</p>
 
-        <div class="card">
-            <div class="advanced">
-                <strong>ADVANCED OPTIONS</strong>
+            <a href="https://wa.me/447123456789" target="_blank" class="support-tile whatsapp-tile">
+                <div class="icon">💬</div>
+                <div class="info">
+                    <h3>WhatsApp Support</h3>
+                    <p>Tap to chat with us</p>
+                    <span>+44 7123 456789</span>
+                </div>
+            </a>
+
+            <div class="support-tile help-tile">
+                <div class="icon">☎️</div>
+                <div class="info">
+                    <h3>Help Center</h3>
+                    <p>Customer Care</p>
+                    <span>+44 7700 900123</span>
+                </div>
             </div>
+        </section>
 
-            <div class="advanced-item">
-                Export my data
+        <!-- ALLERGY -->
+        <section class="card allergy-card section" id="allergy">
+            <div class="card-header">
+                <h2>Allergy Information</h2>
+                <p>Please read carefully before ordering</p>
             </div>
+            <ul class="allergy-list">
+                <li><strong style="color:dodgerblue;">What if I have a food allergy?</strong><br><br>
+                    You should leave a note for the Masterchef on the Checkout Page/Basket or contact the Masterchef directly.
+                </li>
+                <li><strong style="color:dodgerblue;">How do we make sure the allergy info is accurate?</strong><br><br>
+                    Contact the Masterchef directly to get up-to-date info.
+                </li>
+                <li><strong style="color:dodgerblue;">How do I contact the Masterchef?</strong><br><br>
+                    Contact details are on the Masterchef website.
+                </li>
+                <li><strong style="color:dodgerblue;">Does the law require all food businesses to provide information about food allergies?</strong><br><br>
+                Please contact the Masterchef directly for any information regarding any food allergies.</li>
+            </ul>
+        </section>
 
-            <div class="advanced-item delete">
-                Delete account
+        <!-- DELETE ACCOUNT -->
+        <section class="card allergy-card section" id="delete">
+            <div class="card-header">
+                <h2>Delete Account</h2>
+                <p>This action is irreversible!</p>
+                <button onclick="alert('Account deleted!')" style="background:#e03c2a;color:#fff;padding:10px 20px;border:none;border-radius:10px;cursor:pointer;">
+                    Delete Account
+                </button>
             </div>
-        </div>
-    </main>
+        </section>
 
+    </div>
 </div>
 
 
+<script>
+function showSection(id) {
+    // Hide all sections
+    document.querySelectorAll('.section').forEach(s => {
+        s.classList.remove('active');
+    });
+    // Show selected section
+    document.getElementById(id).classList.add('active');
+
+    // Remove active class from all menu items
+    document.querySelectorAll('.side ul li').forEach(li => {
+        li.classList.remove('active');
+    });
+
+    // Add active to clicked menu item
+    document.querySelector(`.side ul li[onclick*="${id}"]`).classList.add('active');
+}
+
+// Logout function
+function logout() {
+    alert('Logging out...');
+    // You can redirect to logout route
+    // window.location.href = '/logout';
+}
+
+// On page load, show profile by default
+document.addEventListener('DOMContentLoaded', () => {
+    showSection('profile');
+});
+</script>
 
 @endsection

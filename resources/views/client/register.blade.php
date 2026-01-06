@@ -20,36 +20,40 @@
         <h2>WELCOME</h2>
     </div>
 
-    <div class="input-group">
-        <i class="fa fa-user"></i>
-        <input type="text" placeholder="Full Name">
-    </div>
+   <form action="{{ route('customer.register') }}" method="POST">
+        @csrf  <!-- CSRF token for security -->
 
-    <div class="input-group">
-        <i class="fa fa-envelope"></i>
-        <input type="email" placeholder="Email address">
-    </div>
+        <div class="input-group">
+            <i class="fa fa-user"></i>
+            <input type="text" name="name" placeholder="Full Name" required>
+        </div>
 
-    <div class="input-group">
-        <i class="fa fa-lock"></i>
-        <input type="password" placeholder="Password">
-    </div>
+        <div class="input-group">
+            <i class="fa fa-envelope"></i>
+            <input type="email" name="email" placeholder="Email address" required>
+        </div>
 
-    <div class="input-group">
-        <i class="fa fa-lock"></i>
-        <input type="password" placeholder="Confirm Password">
-    </div>
+        <div class="input-group">
+            <i class="fa fa-lock"></i>
+            <input type="password" name="password" placeholder="Password" required>
+        </div>
 
-    <div class="terms">
-        By signing in, you agree to our <br>
-        <a href="#">Terms & Conditions</a> and <a href="#">Privacy Policy</a>
-    </div>
+        <div class="input-group">
+            <i class="fa fa-lock"></i>
+            <input type="password" name="password_confirmation" placeholder="Confirm Password" required>
+        </div>
 
-    <button class="btn">REGISTER</button>
+        <div class="terms">
+            By signing in, you agree to our <br>
+            <a href="#">Terms & Conditions</a> and <a href="#">Privacy Policy</a>
+        </div>
 
-    <div class="footer">
-        Have an account? <a href="{{ route('login') }}">Login here</a>
-    </div>
+        <button type="submit" class="btn">REGISTER</button>
+
+        <div class="footer">
+            Have an account? <a href="{{ route('login') }}">Login here</a>
+        </div>
+    </form>
 </div>
 
 </body>

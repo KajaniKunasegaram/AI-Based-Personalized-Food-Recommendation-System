@@ -23,5 +23,48 @@ class CartController extends Controller
         return response()->json(['status' => 'success']);
     }
 
+    public function deleteItem(Request $request)
+    {
+        $cart = session()->get('cart', []);
+        unset($cart[$request->index]);
+
+        session()->put('cart', array_values($cart));
+        return response()->json(['success' => true]);
+    }
+
+    public function deleteModifier(Request $request)
+    {
+        $cart = session()->get('cart', []);
+
+        unset($cart[$request->itemIndex]['modifiers'][$request->modifierIndex]);
+
+        // reindex modifiers
+        $cart[$request->itemIndex]['modifiers'] =
+            array_values($cart[$request->itemIndex]['modifiers']);
+
+        session()->put('cart', $cart);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function updateQty(Request $request)
+    {
+        $cart = session()->get('cart', []);
+
+    $index = $request->index;
+    $newQty = max(1, (int) $request->qty);
+
+    $oldQty = $cart[$index]['qty'];
+    $oldTotal = $cart[$index]['total'];
+
+    $unitPrice = $oldTotal / $oldQty;
+
+    $cart[$index]['qty'] = $newQty;
+    $cart[$index]['total'] = $unitPrice * $newQty;
+
+    session()->put('cart', $cart);
+
+    return response()->json(['success' => true]);
+    }
     
 }

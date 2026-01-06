@@ -92,7 +92,7 @@
                 <a href="/about"><i class="fa-solid fa-circle-info"></i> About</a>
                 <a href="{{ route('client.contact') }}"><i class="fa-solid fa-phone"></i> Contact</a>
                 <a href="{{ route('reviews') }}"><i class="fa-solid fa-star"></i> Review</a>
-                <a href="/more"><i class="fa-solid fa-ellipsis"></i> More</a>
+                <a href="{{ route('login') }}"><i class="fa-solid fa-ellipsis"></i> More</a>
             </div>
         </div>
 

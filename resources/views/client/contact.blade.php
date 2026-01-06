@@ -87,7 +87,7 @@
 
         <div class="contact-card" style="margin-top:30px;"> 
             <div class="contact-info">
-                <h3>Contact Details</h3>
+                <h3 style="color:#e03c2a;">Contact Details</h3>
                 <p><strong>Address:</strong> 15 Baker Street, London, W1U 3BW, United Kingdom</p>
                 <p><strong>Phone:</strong> +44 7700 900123</p>
                 <p><strong>Email:</strong> masterchef.co.uk</p>
@@ -97,16 +97,7 @@
 </div>
    
 
-<!-- <div class="contact-card"> 
 
-    <div class="contact-info">
-        <h3>Our Contact Details</h3>
-        <p><strong>Address:</strong> 123 Bookshop Street, Colombo</p>
-        <p><strong>Phone:</strong> +94 77 123 4567</p>
-        <p><strong>Email:</strong> support@pahanaedu.com</p>
-    </div>
-
-</div> -->
 
 <script>
     window.addEventListener('DOMContentLoaded', (event) => {

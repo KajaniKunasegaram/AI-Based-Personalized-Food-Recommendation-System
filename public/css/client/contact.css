@@ -23,7 +23,7 @@
 .contact-header h2 {
     text-align: center;
     font-size: 28px;
-    color: #1c1c1c;
+    color: #e03c2a;;
     margin-bottom: 8px;
 }
 
@@ -84,7 +84,7 @@ textarea {
 /* Submit Button */
 .submit-btn {
     padding: 14px 30px;
-    background: linear-gradient(135deg, #0f6efd, #0b5ed7);
+    background: #e03c2a;
     color: #fff;
     border: none;
     border-radius: 50px;
@@ -95,7 +95,7 @@ textarea {
 }
 
 .submit-btn:hover {
-    background: linear-gradient(135deg, #0b5ed7, #0f6efd);
+    background: #c0392b;
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(15,110,253,0.3);
 }
@@ -164,7 +164,7 @@ textarea {
 }
 
 .hours-row.header {
-    background: #4a5568;
+    background: #e03c2a;;
     color: #fff;
     font-weight: 300;
     height: 25px;

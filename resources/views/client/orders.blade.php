@@ -268,18 +268,40 @@
         cart.forEach((item, index) => {
             total += item.total;
 
-            let modifiersText = '';
-            if(item.modifiers.length > 0){
-                modifiersText = `<br><small>Modifiers: ${item.modifiers.map(m => m.name).join(', ')}</small>`;
-            }
-
             cartItemsContainer.innerHTML += `
                 <div class="cart-item">
-                    ${item.qty} x <strong>${item.name}</strong>  £${item.total.toFixed(2)}
-                    ${modifiersText}
-                    <button onclick="removeCartItem(${index})" class="remove-btn">×</button>
+                    <div class="cart-item-main">
+                        <span class="qty">${item.qty}x</span>
+                        <span class="name">${item.name}</span>
+                        <span class="price">£${item.total.toFixed(2)}</span>
+                        <button onclick="removeCartItem(${index})" class="remove-btn">×</button>
+                    </div>
+
+                    ${
+                        item.modifiers.length > 0
+                        ? `
+                            <div class="cart-modifiers">
+                                ${item.modifiers.map(m =>
+                                    `<div class="modifier-line">+ ${m.name}</div>`
+                                ).join('')}
+                            </div>
+                        `
+                        : ''
+                    }
                 </div>
             `;
+            // let modifiersText = '';
+            // if(item.modifiers.length > 0){
+            //     modifiersText = `<br><small>Modifiers: ${item.modifiers.map(m => m.name).join(', ')}</small>`;
+            // }
+
+            // cartItemsContainer.innerHTML += `
+            //     <div class="cart-item">
+            //         ${item.qty} x <strong>${item.name}</strong>  £${item.total.toFixed(2)}
+            //         ${modifiersText}
+            //         <button onclick="removeCartItem(${index})" class="remove-btn">×</button>
+            //     </div>
+            // `;
         });
 
         cartTotalEl.innerText = total.toFixed(2);
