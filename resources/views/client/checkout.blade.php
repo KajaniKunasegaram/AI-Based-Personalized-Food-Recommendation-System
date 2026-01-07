@@ -2,6 +2,7 @@
 
 @section('content')
 
+
 <link rel="stylesheet" href="{{asset('css/client/checkout.css')}}">        
 
 <div class="checkout-container">
@@ -167,6 +168,11 @@
 </div>
 
 
+<script>
+    // Check if user is logged in (Laravel session)
+    const isLoggedIn = {{ session()->has('customer_id') ? 'true' : 'false' }};
+</script>
+
 <!-- ADDRESS MODAL -->
 <div class="address-modal" id="addressModal">
 
@@ -194,11 +200,71 @@
 <script src="https://js.stripe.com/v3/"></script>
 
 <script>
-    const payBtn = document.getElementById('payBtn');
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const payBtn = document.getElementById('payBtn');
+        const cart = @json($cart);
+        const isLoggedIn = {{ session()->has('customer_id') ? 'true' : 'false' }};
+
+        payBtn.addEventListener('click', async () => {
+
+            if (!isLoggedIn) {
+                window.location.href = '{{ route("login") }}?redirect=checkout';
+                return;
+            }
+
+            const finalTotal = localStorage.getItem('final_total');
+            const orderType = document.querySelector('input[name="order_type"]:checked').value;
+            const address = document.getElementById('addressText').innerText;
+
+            // 1️⃣ Save data to Laravel session
+            await fetch('{{ route("cart.save") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    cart: cart,
+                    final_total: finalTotal,
+                    order_type: orderType,
+                    delivery_address: address
+                })
+            });
+
+            // 2️⃣ Create Stripe session
+            const res = await fetch('{{ route("stripe.session") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ total: finalTotal })
+            });
+
+            const data = await res.json();
+
+            const stripe = Stripe('{{ env("STRIPE_KEY") }}');
+            stripe.redirectToCheckout({ sessionId: data.id });
+        });
+
+    });
+</script>
+
+
+<!-- <script>
+
+      const isLoggedIn = {{ session()->has('customer_id') ? 'true' : 'false' }};
 
     payBtn.addEventListener('click', () => {
-        const cart = @json($cart); // your PHP cart
-        const total = {{ $total }}; // total in £
+        if (!isLoggedIn) {
+            // Redirect to login with intended page (checkout)
+            window.location.href = '{{ route("login") }}?redirect=checkout';
+            return;
+        }
+
+        // Logged in → proceed to Stripe
+        const total = localStorage.getItem('final_total');
 
         fetch('{{ route("stripe.session") }}', {
             method: 'POST',
@@ -211,16 +277,12 @@
         .then(res => res.json())
         .then(data => {
             const stripe = Stripe('{{ env("STRIPE_KEY") }}');
-            return stripe.redirectToCheckout({ sessionId: data.id });
-        })
-        .then(result => {
-            if(result.error){
-                alert(result.error.message);
-            }
+            stripe.redirectToCheckout({ sessionId: data.id });
         })
         .catch(err => console.error(err));
     });
-</script>
+    
+</script> -->
 
 <script>
     /* ---------------- Delivery / Pickup Toggle ---------------- */
@@ -406,8 +468,9 @@
 
             // 🔥 UPDATE PAY BUTTON ALSO
         payBtn.innerText = `PAY £${formattedTotal}`;
-        
-        localStorage.setItem('final_total', formattedTotal);
+
+        // localStorage.setItem('final_total', formattedTotal);
+        localStorage.setItem('final_total', 1.00);
     }
 
     /* ---------------- Delivery / Pickup Toggle ---------------- */
@@ -514,27 +577,40 @@
     }
 </script>
 
-<script>
-    payBtn.addEventListener('click', () => {
-        const total = localStorage.getItem('final_total');
 
-        fetch('{{ route("stripe.session") }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({
-                cart,
-                total
+<script>
+
+     document.addEventListener('DOMContentLoaded', () => {
+        const payBtn = document.getElementById('payBtn');
+        const cart = @json($cart);
+        const isLoggedIn = {{ session()->has('customer_id') ? 'true' : 'false' }} === true;
+
+        payBtn.addEventListener('click', () => {
+            if (!isLoggedIn) {
+                // Redirect to login and come back to checkout
+                window.location.href = '{{ route("login") }}?redirect=checkout';
+                return;
+            }
+
+            // User is logged in → proceed to Stripe
+            const total = localStorage.getItem('final_total'); 
+
+            fetch('{{ route("stripe.session") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ cart, total })
             })
-        })
-        .then(res => res.json())
-        .then(data => {
-            const stripe = Stripe('{{ env("STRIPE_KEY") }}');
-            stripe.redirectToCheckout({ sessionId: data.id });
+            .then(res => res.json())
+            .then(data => {
+                const stripe = Stripe('{{ env("STRIPE_KEY") }}');
+                stripe.redirectToCheckout({ sessionId: data.id });
+            })
+            .catch(err => console.error(err));
         });
     });
+    
 </script>
-
 @endsection

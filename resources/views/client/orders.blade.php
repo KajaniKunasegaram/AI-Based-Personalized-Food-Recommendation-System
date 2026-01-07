@@ -180,27 +180,52 @@
 
 <script>
     document.getElementById('checkoutBtn').addEventListener('click', function(e) {
-        e.preventDefault(); // stop normal link
+        e.preventDefault();
 
-        // Get cart from localStorage
         const cart = JSON.parse(localStorage.getItem('cart') || '[]');
 
-        // Send to server
+        const total = document.getElementById('cartTotal').innerText;
+        const orderType = document.querySelector('.delivery-pickup .options.active').dataset.type;
+
         fetch('{{ route("cart.save") }}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
             },
-            body: JSON.stringify({ cart })
+            body: JSON.stringify({
+                cart: cart,
+                final_total: total,
+                order_type: orderType
+            })
         })
-        .then(res => res.json())
-        .then(data => {
-            // Now go to checkout page
+        .then(() => {
             window.location.href = '{{ route("checkout") }}';
-        })
-        .catch(err => console.error(err));
+        });
     });
+
+    // document.getElementById('checkoutBtn').addEventListener('click', function(e) {
+    //     e.preventDefault(); // stop normal link
+
+    //     // Get cart from localStorage
+    //     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+    //     // Send to server
+    //     fetch('{{ route("cart.save") }}', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             'X-CSRF-TOKEN': '{{ csrf_token() }}'
+    //         },
+    //         body: JSON.stringify({ cart })
+    //     })
+    //     .then(res => res.json())
+    //     .then(data => {
+    //         // Now go to checkout page
+    //         window.location.href = '{{ route("checkout") }}';
+    //     })
+    //     .catch(err => console.error(err));
+    // });
 </script>
 <script>
     let cart = [];
@@ -232,6 +257,7 @@
 
         // Push to cart
         cart.push({
+            id: currentItemId,
             name: itemName,
             basePrice: itemPrice,
             qty: qty,
@@ -319,9 +345,10 @@
 <script>
     let basePrice = 0;
     let qty = 1;
-
+    let currentItemId = null;
     function openItemPopup(itemId) {
 
+        currentItemId=itemId;
         fetch(`/client/item/${itemId}`)
             .then(res => res.json())
             .then(data => {

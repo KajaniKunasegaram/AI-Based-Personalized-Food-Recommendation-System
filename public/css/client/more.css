@@ -44,7 +44,8 @@
     margin-top: 20px;
 }
 
-.side ul li:hover, .side ul li.active {
+.side ul li:hover, 
+.side ul li.active {
     background: #fff;
     color: #e03c2a;
     transform: translateX(4px);

@@ -12,14 +12,17 @@
         <div class="side">
 
             <div class="user-box"> 
-                <strong>kajanii</strong> <span>officialcarparking2025@gmail.com</span>
+                <strong>{{ session('customer_name') }}</strong> <span>{{ session('customer_email') }}</span>
             </div>
             <ul>
                 <li class="active" onclick="showSection('profile')">My Account</li>
                 <li onclick="showSection('support')">Need Help</li>
                 <li onclick="showSection('allergy')">Allergy Information</li>
                 <li onclick="showSection('delete')">Delete Account</li>
-                <li onclick="logout()">Logout</li>
+                <li>
+                    <a style="text-decoration: none; " href="{{ route('customer.logout') }}" onclick="return confirm('Are you sure you want to logout?')">Logout</a>
+                </li>
+
             </ul>
         </div>
     </section>
@@ -37,11 +40,11 @@
             <div class="profile-info">
                 <div>
                     <label>Name</label>
-                    <input type="text" value="Kajanii" readonly>
+                    <input type="text" value="{{ session('customer_name') }}" readonly>
                 </div>
                 <div>
                     <label>Email</label>
-                    <input type="email" value="kajanii.co.uk" readonly>
+                    <input type="email" value="{{ session('customer_email') }}" readonly>
                 </div>
             </div>
         </section>
@@ -92,13 +95,17 @@
         </section>
 
         <!-- DELETE ACCOUNT -->
-        <section class="card allergy-card section" id="delete">
+         <section class="card allergy-card section" id="delete">
             <div class="card-header">
                 <h2>Delete Account</h2>
                 <p>This action is irreversible!</p>
-                <button onclick="alert('Account deleted!')" style="background:#e03c2a;color:#fff;padding:10px 20px;border:none;border-radius:10px;cursor:pointer;">
-                    Delete Account
-                </button>
+
+                <form action="{{ route('customer.delete') }}" method="POST" onsubmit="return confirm('Are you sure you want to delete your account?');">
+                    @csrf
+                    <button type="submit" style="background:#e03c2a;color:#fff;padding:10px 20px;border:none;border-radius:10px;cursor:pointer;">
+                        Delete Account
+                    </button>
+                </form>
             </div>
         </section>
 

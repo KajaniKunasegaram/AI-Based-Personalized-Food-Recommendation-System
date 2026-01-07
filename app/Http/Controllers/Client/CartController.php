@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class CartController extends Controller
 {   
@@ -18,10 +19,24 @@ class CartController extends Controller
 
     public function save(Request $request)
     {
-        $cart = $request->input('cart', []);
-        session(['cart' => $cart]); // save to session
-        return response()->json(['status' => 'success']);
+         Log::info('CART RECEIVED IN SAVE()', $request->cart);
+        session([
+            'cart' => $request->cart,
+            'final_total' => $request->final_total,
+            'order_type' => $request->order_type,
+            'delivery_address' => $request->delivery_address,
+        ]);
+
+        return response()->json(['status' => 'saved']);
     }
+
+
+    // public function save(Request $request)
+    // {
+    //     $cart = $request->input('cart', []);
+    //     session(['cart' => $cart]); // save to session
+    //     return response()->json(['status' => 'success']);
+    // }
 
     public function deleteItem(Request $request)
     {
@@ -51,20 +66,20 @@ class CartController extends Controller
     {
         $cart = session()->get('cart', []);
 
-    $index = $request->index;
-    $newQty = max(1, (int) $request->qty);
+        $index = $request->index;
+        $newQty = max(1, (int) $request->qty);
 
-    $oldQty = $cart[$index]['qty'];
-    $oldTotal = $cart[$index]['total'];
+        $oldQty = $cart[$index]['qty'];
+        $oldTotal = $cart[$index]['total'];
 
-    $unitPrice = $oldTotal / $oldQty;
+        $unitPrice = $oldTotal / $oldQty;
 
-    $cart[$index]['qty'] = $newQty;
-    $cart[$index]['total'] = $unitPrice * $newQty;
+        $cart[$index]['qty'] = $newQty;
+        $cart[$index]['total'] = $unitPrice * $newQty;
 
-    session()->put('cart', $cart);
+        session()->put('cart', $cart);
 
-    return response()->json(['success' => true]);
+        return response()->json(['success' => true]);
     }
     
 }

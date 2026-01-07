@@ -153,25 +153,23 @@ Route::get('/stripe/cancel', [PaymentController::class, 'cancel'])->name('stripe
 Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews');
 Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
 
-// Route::get('/review', function() {
-//     return view('client.review'); // Make sure the blade file is review.blade.php
-// })->name('review');
+
 
 Route::get('/about', function() {
     return view('client.about'); // Make sure the blade file is review.blade.php
 })->name('about');
 
-Route::get('/more', function() {
-    return view('client.more'); // Make sure the blade file is review.blade.php
+
+
+Route::get('/more', function () {
+    if(!session()->has('customer_id')){
+        return redirect()->route('login'); // redirect if not logged in
+    }
+    return view('client.more');
 })->name('more');
 
-// Route::get('/contact', function() {
-//     return view('client.contact'); // Make sure the blade file is review.blade.php
-// })->name('contact');
 
 
-// Contact Page
-// Route::get('client/contact', fn() => view('client.contact'))->name('client.contact');
 Route::post('client/contact-submit', [ContactController::class, 'submit'])->name('client.contact.submit');
 
 Route::get('client/contact', [ContactController::class, 'index'])->name('client.contact');
@@ -186,16 +184,8 @@ Route::get('/register', function () {
     return view('client.register');
 })->name('register');
 
+Route::post('/customer/login', [CustomerController::class, 'login'])->name('customer.login');
 Route::post('/customer/register', [CustomerController::class, 'register'])->name('customer.register');
+Route::post('/customer/delete', [CustomerController::class, 'deleteAccount'])->name('customer.delete');
+Route::get('/customer/logout', [CustomerController::class, 'logout'])->name('customer.logout');
 
-
-
-// Route::get('/register', [CustomerController::class, 'showRegister'])->name('register');
-// Route::post('/register', [CustomerController::class, 'register'])->name('register.post');
-
-// Route::get('/login', [CustomerController::class, 'showLogin'])->name('login');
-// Route::post('/login', [CustomerController::class, 'login'])->name('login.post');
-
-// Route::get('/checkout', function () {
-//     return view('client.checkout');
-// })->name('checkout');
