@@ -222,7 +222,7 @@
                         <i class="bi bi-cart" ></i><br>Menu
                     </button>
                 </a>
-                <a href="#">
+                <a href="{{url('admin/orders')}}">
                     <button class="main">
                         <i class="bi bi-shop" ></i><br>Orders
                     </button>
@@ -260,7 +260,7 @@
             <div class="offcanvas-body">
                 <ul class="list-group">
 
-                    <a href="{{url('admin/dashboard')}}"  class="text-decoration-none">
+                    <a  href="{{ route('admin.dashboard') }}"  class="text-decoration-none">
                         <li class="list-group-item d-flex align-items-center custom-border">
                         <i class="bi bi-speedometer2 me-2"></i> Dashboard
                         </li>
@@ -290,7 +290,7 @@
                         </li>
                     </a>
 
-                    <a href="{{url('admin/customers')}}" class="text-decoration-none">
+                    <a href="{{ route('admin.customers') }}" class="text-decoration-none">
                         <li class="list-group-item d-flex align-items-center  custom-border">
                             <i class="bi bi-people me-2"></i> Customers
                         </li>
@@ -314,17 +314,17 @@
                         </li>
                     </a>
 
-                    <a href="{{url('admin/billing')}}" class="text-decoration-none">
+                    <!-- <a href="{{url('admin/billing')}}" class="text-decoration-none">
                         <li class="list-group-item d-flex align-items-center  custom-border">
                             <i class="bi bi-receipt me-2"></i> Billing
                         </li>
-                    </a>
+                    </a> -->
 
-                    <a href="{{url('admin/reports')}}" class="text-decoration-none">
+                    <!-- <a href="{{url('admin/reports')}}" class="text-decoration-none">
                         <li class="list-group-item d-flex align-items-center custom-border">
                             <i class="bi bi-bar-chart-line me-2"></i> Reports
                         </li>
-                    </a>
+                    </a> -->
 
                     <!-- <a href="#" class="text-decoration-none">
                         <li class="list-group-item d-flex align-items-center custom-border">
@@ -352,11 +352,11 @@
                         </li>
                     </a> -->
 
-                    <a href="{{url('admin/settings')}}" class="text-decoration-none">
+                    <!-- <a href="{{url('admin/settings')}}" class="text-decoration-none">
                         <li class="list-group-item d-flex align-items-center custom-border">
                             <i class="bi bi-gear me-2"></i> Settings
                         </li>
-                    </a>
+                    </a> -->
 
                     <li class="list-group-item d-flex align-items-center custom-border" id="moreToggle">
                         <i class="bi bi-three-dots-vertical me-2"></i> 

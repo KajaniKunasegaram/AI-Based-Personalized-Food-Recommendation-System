@@ -41,9 +41,9 @@
         </div>
 
         <div class="order-summary">
-            Subtotal: £<span id="orderSubtotal">0.00</span><br>
-            Grand Total: £<span id="orderTotal">0.00</span>
-            <span class="payment-type" id="paymentType">---</span>
+            <span id="orderSubtotal"></span><br>
+           <span id="orderTotal"></span>
+            <span id="paymentType"></span>
         </div>
 
     </div>
@@ -112,11 +112,26 @@
                 document.getElementById('orderType').querySelector('strong').innerText = data.order_type.toUpperCase();
                 document.getElementById('orderTime').querySelector('strong').innerText =
                     new Date(data.created_at).toLocaleTimeString();
-                document.getElementById('paymentType').innerText =
-                    data.payment_type.toUpperCase();
+                // document.getElementById('paymentType').innerText =
+                //     data.payment_type.toUpperCase();
 
                 const itemsDiv = document.getElementById('orderItems');
                 itemsDiv.innerHTML = '';
+
+                  // Add watermark if order is completed
+                const orderDetailsCol = document.getElementById('orderDetailsCol');
+
+                // Remove existing watermark
+                const existingWatermark = orderDetailsCol.querySelector('.watermark');
+                if(existingWatermark) existingWatermark.remove();
+
+                if(data.status === 'completed'){
+                    const watermark = document.createElement('div');
+                    watermark.classList.add('watermark');
+                    watermark.innerText = 'PAID';
+                    orderDetailsCol.appendChild(watermark);
+                }
+
 
                 // Header row
                 itemsDiv.innerHTML += `
@@ -135,6 +150,7 @@
                     const unitPrice = parseFloat(item.unit_price).toFixed(2);
                     const totalPrice = parseFloat(item.total_price).toFixed(2);
 
+                    // Main item row
                     itemsDiv.innerHTML += `
                         <div class="order-item">
                             <span class="name">${item.item_name}</span>
@@ -144,21 +160,38 @@
                         </div>
                     `;
                     subtotal += parseFloat(item.total_price);
+
+                    // Add modifiers if exist
+                    if(item.modifiers && item.modifiers.length > 0){
+                        item.modifiers.forEach(mod => {
+                            const modPrice = mod.price ? parseFloat(mod.price) : 0;
+                            itemsDiv.innerHTML += `
+                                <div class="order-item modifier">
+                                    <span class="name">- ${mod.name}</span>
+                                    <span class="total">£${modPrice.toFixed(2)}</span>
+                                </div>
+                            `;
+                            subtotal += modPrice; // add modifier price to subtotal
+                        });
+                    }
                 });
 
-                // Totals row — align everything in right column
+                // Totals row — right aligned
                 itemsDiv.innerHTML += `<hr>`;
                 itemsDiv.innerHTML += `
                     <div class="order-summary">
                         <div class="summary-row"><span>Subtotal:</span> <span>£${subtotal.toFixed(2)}</span></div>
                         <div class="summary-row"><span>Delivery:</span> <span>£${parseFloat(data.delivery_charge).toFixed(2)}</span></div>
                         <div class="summary-row"><span>Service:</span> <span>£${parseFloat(data.service_charge).toFixed(2)}</span></div>
-                        <div class="summary-row"><span><strong>Grand Total:</strong></span> <span><strong>£${parseFloat(data.total_amount).toFixed(2)}</strong></span></div>
-                        <div class="summary-row"><span>Payment:</span> <span>${data.payment_type.toUpperCase()}</span></div>
+                        <div class="summary-row"><span><strong>Grand Total:</strong></span> 
+                            <span><strong>£${(subtotal + parseFloat(data.delivery_charge) + parseFloat(data.service_charge)).toFixed(2)}</strong></span>
+                        </div>
+                        <div class="summary-row" ><span>Payment:</span> <span class="payment-type">${data.payment_type.toUpperCase()}</span></div>
                     </div>
                 `;
-        });
+            });
     }
+
     function updateStatus(status) {
         if (!selectedOrderId) {
             alert('Please select an order');
@@ -206,136 +239,136 @@
             });
     }
 
-function selectOrder(row){
-    document.querySelectorAll('#ordersTable tbody tr').forEach(r => r.classList.remove('selected'));
-    row.classList.add('selected');
+    function selectOrder(row){
+        document.querySelectorAll('#ordersTable tbody tr').forEach(r => r.classList.remove('selected'));
+        row.classList.add('selected');
 
-    const data = JSON.parse(row.dataset.order);
+        const data = JSON.parse(row.dataset.order);
 
-    document.getElementById('orderID').querySelector('strong').innerText = data.id;
-    document.getElementById('orderType').querySelector('strong').innerText = data.type;
-    document.getElementById('orderTime').querySelector('strong').innerText = data.time;
+        document.getElementById('orderID').querySelector('strong').innerText = data.id;
+        document.getElementById('orderType').querySelector('strong').innerText = data.type;
+        document.getElementById('orderTime').querySelector('strong').innerText = data.time;
 
-    const itemsDiv = document.getElementById('orderItems');
-    itemsDiv.innerHTML = '';
-    let subtotal = 0;
-    data.items.forEach(item => {
-        itemsDiv.innerHTML += `<div class="order-item">${item.qty} × ${item.name} £${item.price}</div>`;
-        subtotal += item.price;
-    });
-
-    document.getElementById('orderSubtotal').innerText = subtotal.toFixed(2);
-    document.getElementById('orderTotal').innerText = data.amt;
-    document.getElementById('paymentType').innerText = data.mode.toUpperCase();
-}
-
-
-function toggleMenu(e) {
-    e.stopPropagation(); // prevent row click
-        const dropdown = e.target.nextElementSibling;
-        // Hide any other open dropdowns
-        document.querySelectorAll('.menu-dropdown').forEach(d => {
-            if(d !== dropdown) d.style.display = 'none';
+        const itemsDiv = document.getElementById('orderItems');
+        itemsDiv.innerHTML = '';
+        let subtotal = 0;
+        data.items.forEach(item => {
+            itemsDiv.innerHTML += `<div class="order-item">${item.qty} × ${item.name} £${item.price}</div>`;
+            subtotal += item.price;
         });
-        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+
+        document.getElementById('orderSubtotal').innerText = subtotal.toFixed(2);
+        document.getElementById('orderTotal').innerText = data.amt;
+        // document.getElementById('paymentType').innerText = data.mode.toUpperCase();
     }
 
-    // Close dropdown if click outside
-    document.addEventListener('click', () => {
-        document.querySelectorAll('.menu-dropdown').forEach(d => d.style.display = 'none');
-    });
+
+    function toggleMenu(e) {
+        e.stopPropagation(); // prevent row click
+            const dropdown = e.target.nextElementSibling;
+            // Hide any other open dropdowns
+            document.querySelectorAll('.menu-dropdown').forEach(d => {
+                if(d !== dropdown) d.style.display = 'none';
+            });
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // Close dropdown if click outside
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.menu-dropdown').forEach(d => d.style.display = 'none');
+        });
 </script>
 
 <script>
-function printOrder() {
+    function printOrder() {
 
-    if (!selectedOrderId) {
-        alert('Please select an order to print');
-        return;
+        if (!selectedOrderId) {
+            alert('Please select an order to print');
+            return;
+        }
+
+        const printContent = document.getElementById('orderDetailsCol').innerHTML;
+
+        const printWindow = window.open('', '', 'width=900,height=600');
+
+        printWindow.document.write(`
+            <html>
+            <head>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        padding: 20px;
+                        max-width: 400px;
+                        margin: auto;
+                    }
+                    h3 {
+                        text-align: center;
+                        margin: 2px 0;
+                    }
+                    h4 {
+                        text-align: center;
+                        margin-bottom: 10px;
+                    }
+                    .menu-container {
+                        display: none; /* hide menu */
+                    }
+                    #orderItems {
+                        font-family: monospace;
+                        margin-top: 10px;
+                    }
+                    .order-item {
+                        display: flex;
+                        justify-content: space-between;
+                        padding: 2px 0;
+                    }
+                    .order-item.header {
+                        font-weight: bold;
+                    }
+                    .order-item span {
+                        flex: 1;
+                        text-align: left;
+                    }
+                    .order-item .qty,
+                    .order-item .unit,
+                    .order-item .total {
+                        flex: 0.8;
+                        text-align: right;
+                    }
+                    .order-summary {
+                        margin-top: 10px;
+                        font-weight: bold;
+                        border-top: 1px dashed #000;
+                        padding-top: 5px;
+                    }
+                    .summary-row {
+                        display: flex;
+                        justify-content: space-between;
+                        padding: 2px 0;
+                    }
+                    .payment-type {
+                        display: block;
+                        margin-top: 10px;
+                        text-align: right;
+                    }
+                </style>
+            </head>
+            <body>
+                <!-- Shop Header -->
+                <h3>Master Chef</h3>
+                <h3>15 Baker Street, <br>London, W1U 3BW, <br>United Kingdom</h3>
+                <h3>+44 7700 900123</h3>
+                <hr>
+
+                <!-- Order Content -->
+                ${printContent}
+            </body>
+            </html>
+        `);
+
+        printWindow.document.close();
+
+        printWindow.focus();
+        printWindow.print();
     }
-
-    const printContent = document.getElementById('orderDetailsCol').innerHTML;
-
-    const printWindow = window.open('', '', 'width=900,height=600');
-
-    printWindow.document.write(`
-        <html>
-        <head>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    padding: 20px;
-                    max-width: 400px;
-                    margin: auto;
-                }
-                h3 {
-                    text-align: center;
-                    margin: 2px 0;
-                }
-                h4 {
-                    text-align: center;
-                    margin-bottom: 10px;
-                }
-                .menu-container {
-                    display: none; /* hide menu */
-                }
-                #orderItems {
-                    font-family: monospace;
-                    margin-top: 10px;
-                }
-                .order-item {
-                    display: flex;
-                    justify-content: space-between;
-                    padding: 2px 0;
-                }
-                .order-item.header {
-                    font-weight: bold;
-                }
-                .order-item span {
-                    flex: 1;
-                    text-align: left;
-                }
-                .order-item .qty,
-                .order-item .unit,
-                .order-item .total {
-                    flex: 0.8;
-                    text-align: right;
-                }
-                .order-summary {
-                    margin-top: 10px;
-                    font-weight: bold;
-                    border-top: 1px dashed #000;
-                    padding-top: 5px;
-                }
-                .summary-row {
-                    display: flex;
-                    justify-content: space-between;
-                    padding: 2px 0;
-                }
-                .payment-type {
-                    display: block;
-                    margin-top: 10px;
-                    text-align: right;
-                }
-            </style>
-        </head>
-        <body>
-            <!-- Shop Header -->
-            <h3>Master Chef</h3>
-            <h3>15 Baker Street, <br>London, W1U 3BW, <br>United Kingdom</h3>
-            <h3>+44 7700 900123</h3>
-            <hr>
-
-            <!-- Order Content -->
-            ${printContent}
-        </body>
-        </html>
-    `);
-
-    printWindow.document.close();
-
-    printWindow.focus();
-    printWindow.print();
-}
 </script>
 @endsection

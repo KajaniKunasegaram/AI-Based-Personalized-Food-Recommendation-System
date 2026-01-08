@@ -12,6 +12,10 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\Admin\MenuLoaderController;
 use App\Http\Controllers\Admin\DeliveryController;
 use App\Http\Controllers\Admin\AdOrderController;
+use App\Http\Controllers\Admin\AdCustomerController;
+use App\Http\Controllers\Admin\DashboardController;
+
+
 
 use App\Http\Controllers\Client\CartController;
 use App\Http\Controllers\Client\AuthController;
@@ -32,8 +36,10 @@ use App\Models\ModifierGroupModel;
 // Admin Routes
 
 
-Route::get('/admin/dashboard', fn() => view('admin.dashboard'));
+// Route::get('/admin/dashboard', fn() => view('admin.dashboard'));
 
+Route::get('admin/dashboard', [DashboardController::class, 'index'])
+    ->name('admin.dashboard');
 /* MENU (IMPORTANT FIX) */
 Route::get('/admin/menu', [CategoryController::class, 'menus']);
 
@@ -48,7 +54,11 @@ Route::prefix('admin')->group(function () {
 
 Route::get('admin/take-payment', fn() => view('admin.take-payment'));
 Route::get('admin/website-status', fn() => view('admin.website-status'));
-Route::get('admin/customers', fn() => view('admin.customers'));
+// Route::get('admin/customers', fn() => view('admin.customers'));
+
+Route::get('admin/customers', [AdCustomerController::class, 'index'])
+    ->name('admin.customers');
+
 
 // Route::get('admin/reviews', fn() => view('admin.reviews'));
 Route::get('admin/billing', fn() => view('admin.billing'));
@@ -155,6 +165,10 @@ Route::post('/cart/modifier/delete', [CartController::class, 'deleteModifier'])-
 Route::post('/stripe/create-session', [PaymentController::class, 'createSession'])->name('stripe.session');
 Route::get('/stripe/success', [PaymentController::class, 'success'])->name('stripe.success');
 Route::get('/stripe/cancel', [PaymentController::class, 'cancel'])->name('stripe.cancel');
+
+
+Route::get('/order/success', [\App\Http\Controllers\Client\PaymentController::class, 'cashSuccess'])
+    ->name('orders.success');
 
 
 Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews');

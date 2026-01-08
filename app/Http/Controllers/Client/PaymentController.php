@@ -110,4 +110,54 @@ class PaymentController extends Controller
     {
         return view('client.payment-cancel');
     }
+
+    public function cashSuccess()
+    {
+        $cart = Session::get('cart', []);
+        $finalTotal = Session::get('final_total', 0);
+        $orderType = Session::get('order_type', 'delivery');
+        $address = Session::get('delivery_address', null);
+
+        if (empty($cart)) {
+            return redirect()->route('orders')->with('error', 'Cart is empty!');
+        }
+
+        // 1️⃣ Create Master Order
+        $mOrder = MOrderModel::create([
+            'customer_id' => session('customer_id'),
+            'order_type' => $orderType,
+            'delivery_address' => $address,
+            'service_charge' => 1,
+            'delivery_charge' => $orderType == 'delivery' ? 2 : 0,
+            'subtotal' => $finalTotal - 1 - ($orderType == 'delivery' ? 2 : 0),
+            'total_amount' => $finalTotal,
+            'payment_type' => 'cash',
+            'payment_status' => 'pending', // cash not paid yet
+            'status' => 'new',
+        ]);
+
+        // 2️⃣ Create order items
+        foreach ($cart as $item) {
+            if (!isset($item['id'])) continue;
+
+            TOrderModel::create([
+                'order_id' => $mOrder->id,
+                'item_id' => $item['id'],
+                'item_name' => $item['name'],
+                'quantity' => $item['qty'],
+                'unit_price' => $item['basePrice'],
+                'total_price' => $item['total'],
+                'modifiers' => !empty($item['modifiers']) ? $item['modifiers'] : null,
+            ]);
+        }
+
+        // 3️⃣ Clear cart session
+        Session::forget('cart');
+        Session::forget('final_total');
+        Session::forget('order_type');
+        Session::forget('delivery_address');
+
+        // 4️⃣ Show success page (reuse payment-success view)
+        return view('client.payment-success', compact('mOrder'));
+    }
 }
