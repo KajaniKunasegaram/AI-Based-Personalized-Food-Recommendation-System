@@ -11,7 +11,7 @@ use App\Http\Controllers\ReviewController;
 
 use App\Http\Controllers\Admin\MenuLoaderController;
 use App\Http\Controllers\Admin\DeliveryController;
-
+use App\Http\Controllers\Admin\AdOrderController;
 
 use App\Http\Controllers\Client\CartController;
 use App\Http\Controllers\Client\AuthController;
@@ -38,7 +38,14 @@ Route::get('/admin/dashboard', fn() => view('admin.dashboard'));
 Route::get('/admin/menu', [CategoryController::class, 'menus']);
 
 /* Other admin pages */
-Route::get('admin/orders', fn() => view('admin.orders'));
+// Route::get('admin/orders', fn() => view('admin.orders'));
+Route::prefix('admin')->group(function () {
+    Route::get('/orders', [AdOrderController::class, 'index'])->name('admin.orders');
+    Route::get('/orders/{id}', [AdOrderController::class, 'show']);
+    Route::post('/orders/{id}/status', [AdOrderController::class, 'updateStatus']);
+});
+
+
 Route::get('admin/take-payment', fn() => view('admin.take-payment'));
 Route::get('admin/website-status', fn() => view('admin.website-status'));
 Route::get('admin/customers', fn() => view('admin.customers'));

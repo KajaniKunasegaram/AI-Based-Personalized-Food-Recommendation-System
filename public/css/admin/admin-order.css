@@ -1,0 +1,199 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f6fa;
+    color: #333;
+}
+
+.orders-dashboard {
+    display: flex;
+    gap: 20px;
+    padding: 15px 0;
+}
+
+/* LEFT COLUMN: Order details */
+.order-details-col {
+    width: 42%;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.order-details-col h4 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    /* border-bottom: 1px solid #eee; */
+    padding-bottom: 8px;
+}
+
+.order-meta p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.order-meta strong {
+    font-weight: 600;
+}
+
+.order-items {
+    margin-top: 15px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    /* border-bottom: 1px solid #eee; */
+    font-size: 14px;
+}
+
+/* .order-summary {
+    margin-top: 15px;
+    font-weight: 600;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+} */
+
+.order-summary {
+    margin-top: 10px;
+    font-weight: bold;
+    /* border-top: 1px dashed #000; */
+    padding-top: 5px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 0;
+}
+
+.payment-type {
+    display: inline-block;
+    padding: 3px 8px;
+    background: #28a745;
+    color: #fff;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+
+
+/* RIGHT COLUMN: Orders list */
+.orders-list-col {
+    width: 58%;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    padding: 10px;
+}
+
+.status-tabs {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.status-tabs button {
+    flex: 1;
+    padding: 10px 0;
+    border: none;
+    background: #f0f0f0;
+    cursor: pointer;
+    font-weight: 600;
+    border-radius: 6px 6px 0 0;
+    transition: all 0.2s;
+}
+
+.status-tabs button.active {
+    background: #666;
+    color: #fff;
+}
+
+.orders-table {
+    width: 100%;
+    /* border-collapse: collapse; */
+    font-size: 14px;
+}
+
+.orders-table th, .orders-table td {
+    /* border: 1px solid #ddd; */
+    padding: 8px 10px;
+    text-align: left;
+}
+
+.orders-table th {
+    background: #f7f7f7;
+    font-weight: 600;
+}
+
+.orders-table tr:hover {
+    background: #f1f7ff;
+    cursor: pointer;
+}
+
+.orders-table tr.selected {
+    background: #d0e7ff !important;
+}
+
+.red-text {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.menu-container {
+    position: relative;
+}
+
+.menu-icon {
+    position: absolute;
+    top: 4px;   /* adjust vertical position */
+    right: 6px; /* right side */
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    user-select: none;
+}
+
+.menu-dropdown {
+    display: none;
+    position: absolute;
+    top: 24px; /* below the icon */
+    right: 0;
+    background: #fff;
+    /* border: 1px solid #ddd; */
+    border-radius: 6px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 140px;
+    z-index: 100;
+}
+
+.menu-dropdown li {
+    padding: 10px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.menu-dropdown li:hover {
+    background: #f2f2f2;
+}

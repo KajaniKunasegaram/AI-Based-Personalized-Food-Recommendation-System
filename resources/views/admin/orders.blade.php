@@ -5,221 +5,7 @@
 
 @section('content')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-
-<style>
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f5f6fa;
-    color: #333;
-}
-
-.orders-dashboard {
-    display: flex;
-    gap: 20px;
-    padding: 15px 0;
-}
-
-/* LEFT COLUMN: Order details */
-.order-details-col {
-    width: 42%;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-}
-
-.order-details-col h4 {
-    font-size: 20px;
-    margin-bottom: 15px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 8px;
-}
-
-.order-meta p {
-    margin: 5px 0;
-    font-size: 14px;
-}
-
-.order-meta strong {
-    font-weight: 600;
-}
-
-.order-items {
-    margin-top: 15px;
-    flex: 1;
-    overflow-y: auto;
-}
-
-.order-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px solid #eee;
-    font-size: 14px;
-}
-
-.order-summary {
-    margin-top: 15px;
-    font-weight: 600;
-    border-top: 1px solid #eee;
-    padding-top: 10px;
-}
-
-.payment-type {
-    display: inline-block;
-    padding: 3px 8px;
-    background: #28a745;
-    color: #fff;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 600;
-    margin-left: 8px;
-}
-
-/* STATUS BUTTONS FOR LEFT COLUMN */
-.status-update {
-    margin-top: 10px;
-    display: flex;
-    gap: 10px;
-}
-
-.status-update button {
-    flex: 1;
-    padding: 6px 0;
-    border: none;
-    border-radius: 4px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    color: #fff;
-}
-
-.status-update .new { background: #17a2b8; }
-.status-update .way { background: #ffc107; color: #333; }
-.status-update .completed { background: #28a745; }
-.status-update .cancelled { background: #dc3545; }
-
-.status-update button:hover {
-    opacity: 0.85;
-}
-
-/* RIGHT COLUMN: Orders list */
-.orders-list-col {
-    width: 58%;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    padding: 10px;
-}
-
-.status-tabs {
-    display: flex;
-    gap: 5px;
-    margin-bottom: 10px;
-}
-
-.status-tabs button {
-    flex: 1;
-    padding: 10px 0;
-    border: none;
-    background: #f0f0f0;
-    cursor: pointer;
-    font-weight: 600;
-    border-radius: 6px 6px 0 0;
-    transition: all 0.2s;
-}
-
-.status-tabs button.active {
-    background: #666;
-    color: #fff;
-}
-
-.orders-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-}
-
-.orders-table th, .orders-table td {
-    border: 1px solid #ddd;
-    padding: 8px 10px;
-    text-align: left;
-}
-
-.orders-table th {
-    background: #f7f7f7;
-    font-weight: 600;
-}
-
-.orders-table tr:hover {
-    background: #f1f7ff;
-    cursor: pointer;
-}
-
-.orders-table tr.selected {
-    background: #d0e7ff !important;
-}
-
-.red-text {
-    color: #dc3545;
-    font-weight: 600;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-.menu-container {
-    position: relative;
-}
-
-.menu-icon {
-    position: absolute;
-    top: 4px;   /* adjust vertical position */
-    right: 6px; /* right side */
-    cursor: pointer;
-    font-size: 18px;
-    font-weight: bold;
-    user-select: none;
-}
-
-.menu-dropdown {
-    display: none;
-    position: absolute;
-    top: 24px; /* below the icon */
-    right: 0;
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    width: 140px;
-    z-index: 100;
-}
-
-.menu-dropdown li {
-    padding: 10px 12px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background 0.2s;
-}
-
-.menu-dropdown li:hover {
-    background: #f2f2f2;
-}
-
-</style>
+<link rel="stylesheet" href="{{asset('css/admin/admin-order.css')}}">        
 
 <div class="orders-dashboard">
 
@@ -237,9 +23,9 @@ body {
             <span class="menu-icon" onclick="toggleMenu(event)">⋮</span>
             <ul class="menu-dropdown">
             <li onclick="printOrder()">Print</li>
-            <li onclick="updateStatus(this, 'on the way')">On the Way</li>
-            <li onclick="updateStatus(this, 'completed')">Completed</li>
-            <li onclick="updateStatus(this, 'cancelled')">Cancel</li>
+            <li onclick="updateStatus('on_the_way')">On the Way</li>
+            <li onclick="updateStatus('completed')">Completed</li>
+            <li onclick="updateStatus('cancelled')">Cancel</li>
             </ul>
         </div>
         
@@ -260,22 +46,15 @@ body {
             <span class="payment-type" id="paymentType">---</span>
         </div>
 
-        <!-- <div class="status-update">
-            <button class="new">New</button>
-            <button class="way">On The Way</button>
-            <button class="completed">Completed</button>
-            <button class="cancelled">Cancelled</button>
-        </div> -->
     </div>
 
     <!-- RIGHT COLUMN -->
     <div class="orders-list-col">
         <div class="status-tabs">
-            <button class="active" onclick="filterStatus('current')">CURRENT</button>
-            <button onclick="filterStatus('way')">ON THE WAY</button>
-            <button onclick="filterStatus('completed')">COMPLETED</button>
-            <button onclick="filterStatus('completed')">CANCELLED</button>
-
+            <button class="active" onclick="filterStatus(this, 'new')">CURRENT</button>
+            <button onclick="filterStatus(this, 'on_the_way')">ON THE WAY</button>
+            <button onclick="filterStatus(this, 'completed')">COMPLETED</button>
+            <button onclick="filterStatus(this, 'cancelled')">CANCELLED</button>
         </div>
 
         <table class="orders-table" id="ordersTable">
@@ -290,23 +69,29 @@ body {
                 </tr>
             </thead>
             <tbody>
-                <!-- Example rows -->
-                <tr data-status="current" onclick="selectOrder(this)" data-order='{"id":2,"type":"In-Store","address":"Instore","time":"11:09","amt":"70.00","mode":"Cash","items":[{"name":"defswa","qty":7,"price":70}]}'>
-                    <td>2</td>
-                    <td>🏠</td>
-                    <td>Instore</td>
-                    <td>11:09</td>
-                    <td>£70.00</td>
-                    <td>💵</td>
+                @foreach($orders as $order)
+                <tr onclick="loadOrder({{ $order->id }})"
+                    data-status="{{ $order->status }}">
+                    
+                    <td>{{ $order->id }}</td>
+
+                    <td>
+                        {{ $order->order_type == 'delivery' ? '🚚' : '🏠' }}
+                    </td>
+
+                    <td>
+                        {{ $order->order_type == 'pickup' ? 'Instore' : $order->delivery_address }}
+                    </td>
+
+                    <td>{{ $order->created_at->format('H:i') }}</td>
+
+                    <td>£{{ number_format($order->total_amount, 2) }}</td>
+
+                    <td>
+                        {{ $order->payment_type == 'card' ? '💳' : '💵' }}
+                    </td>
                 </tr>
-                <tr data-status="completed" onclick="selectOrder(this)" data-order='{"id":7,"type":"Delivery","address":"Home","time":"08:03","amt":"0.12","mode":"Cash","items":[{"name":"item2","qty":1,"price":0.12}]}'>
-                    <td class="red-text">7</td>
-                    <td>🚚</td>
-                    <td class="red-text">Home</td>
-                    <td>08:03</td>
-                    <td>£0.12</td>
-                    <td>💵</td>
-                </tr>
+                @endforeach
             </tbody>
         </table>
     </div>
@@ -314,16 +99,112 @@ body {
 </div>
 
 <script>
-function filterStatus(status){
-    const buttons = document.querySelectorAll('.status-tabs button');
-    buttons.forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
+    let selectedOrderId = null;
 
-    const rows = document.querySelectorAll('#ordersTable tbody tr');
-    rows.forEach(row => {
-        row.style.display = (row.dataset.status === status) ? 'table-row' : 'none';
+    function loadOrder(orderId) {
+        selectedOrderId = orderId;
+
+        fetch(`/admin/orders/${orderId}`)
+            .then(res => res.json())
+            .then(data => {
+
+                document.getElementById('orderID').querySelector('strong').innerText = data.id;
+                document.getElementById('orderType').querySelector('strong').innerText = data.order_type.toUpperCase();
+                document.getElementById('orderTime').querySelector('strong').innerText =
+                    new Date(data.created_at).toLocaleTimeString();
+                document.getElementById('paymentType').innerText =
+                    data.payment_type.toUpperCase();
+
+                const itemsDiv = document.getElementById('orderItems');
+                itemsDiv.innerHTML = '';
+
+                // Header row
+                itemsDiv.innerHTML += `
+                    <div class="order-item header">
+                        <span class="name">Item</span>
+                        <span class="qty">Qty</span>
+                        <span class="unit">Unit</span>
+                        <span class="total">Total</span>
+                    </div>
+                    <hr>
+                `;
+
+                let subtotal = 0;
+
+                data.items.forEach(item => {
+                    const unitPrice = parseFloat(item.unit_price).toFixed(2);
+                    const totalPrice = parseFloat(item.total_price).toFixed(2);
+
+                    itemsDiv.innerHTML += `
+                        <div class="order-item">
+                            <span class="name">${item.item_name}</span>
+                            <span class="qty">${item.quantity}</span>
+                            <span class="unit">£${unitPrice}</span>
+                            <span class="total">£${totalPrice}</span>
+                        </div>
+                    `;
+                    subtotal += parseFloat(item.total_price);
+                });
+
+                // Totals row — align everything in right column
+                itemsDiv.innerHTML += `<hr>`;
+                itemsDiv.innerHTML += `
+                    <div class="order-summary">
+                        <div class="summary-row"><span>Subtotal:</span> <span>£${subtotal.toFixed(2)}</span></div>
+                        <div class="summary-row"><span>Delivery:</span> <span>£${parseFloat(data.delivery_charge).toFixed(2)}</span></div>
+                        <div class="summary-row"><span>Service:</span> <span>£${parseFloat(data.service_charge).toFixed(2)}</span></div>
+                        <div class="summary-row"><span><strong>Grand Total:</strong></span> <span><strong>£${parseFloat(data.total_amount).toFixed(2)}</strong></span></div>
+                        <div class="summary-row"><span>Payment:</span> <span>${data.payment_type.toUpperCase()}</span></div>
+                    </div>
+                `;
+        });
+    }
+    function updateStatus(status) {
+        if (!selectedOrderId) {
+            alert('Please select an order');
+            return;
+        }
+
+        fetch(`/admin/orders/${selectedOrderId}/status`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ status })
+        })
+        .then(res => res.json())
+        .then(() => {
+            alert('Order status updated');
+            location.reload();
+        });
+    }
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // CURRENT button select pannum
+        const defaultBtn = document.querySelector('.status-tabs button.active');
+
+        // Page open aagum pothu filter run
+        filterStatus(defaultBtn, 'new');
+
     });
-}
+    function filterStatus(btn, status) {
+
+        // active button
+        document.querySelectorAll('.status-tabs button')
+            .forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // filter rows
+        document.querySelectorAll('#ordersTable tbody tr')
+            .forEach(row => {
+                row.style.display =
+                    row.dataset.status === status ? 'table-row' : 'none';
+            });
+    }
 
 function selectOrder(row){
     document.querySelectorAll('#ordersTable tbody tr').forEach(r => r.classList.remove('selected'));
@@ -365,4 +246,96 @@ function toggleMenu(e) {
     });
 </script>
 
+<script>
+function printOrder() {
+
+    if (!selectedOrderId) {
+        alert('Please select an order to print');
+        return;
+    }
+
+    const printContent = document.getElementById('orderDetailsCol').innerHTML;
+
+    const printWindow = window.open('', '', 'width=900,height=600');
+
+    printWindow.document.write(`
+        <html>
+        <head>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    padding: 20px;
+                    max-width: 400px;
+                    margin: auto;
+                }
+                h3 {
+                    text-align: center;
+                    margin: 2px 0;
+                }
+                h4 {
+                    text-align: center;
+                    margin-bottom: 10px;
+                }
+                .menu-container {
+                    display: none; /* hide menu */
+                }
+                #orderItems {
+                    font-family: monospace;
+                    margin-top: 10px;
+                }
+                .order-item {
+                    display: flex;
+                    justify-content: space-between;
+                    padding: 2px 0;
+                }
+                .order-item.header {
+                    font-weight: bold;
+                }
+                .order-item span {
+                    flex: 1;
+                    text-align: left;
+                }
+                .order-item .qty,
+                .order-item .unit,
+                .order-item .total {
+                    flex: 0.8;
+                    text-align: right;
+                }
+                .order-summary {
+                    margin-top: 10px;
+                    font-weight: bold;
+                    border-top: 1px dashed #000;
+                    padding-top: 5px;
+                }
+                .summary-row {
+                    display: flex;
+                    justify-content: space-between;
+                    padding: 2px 0;
+                }
+                .payment-type {
+                    display: block;
+                    margin-top: 10px;
+                    text-align: right;
+                }
+            </style>
+        </head>
+        <body>
+            <!-- Shop Header -->
+            <h3>Master Chef</h3>
+            <h3>15 Baker Street, <br>London, W1U 3BW, <br>United Kingdom</h3>
+            <h3>+44 7700 900123</h3>
+            <hr>
+
+            <!-- Order Content -->
+            ${printContent}
+        </body>
+        </html>
+    `);
+
+    printWindow.document.close();
+
+    printWindow.focus();
+    printWindow.print();
+}
+</script>
 @endsection
