@@ -376,6 +376,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+
+    
     // payBtn.addEventListener('click', async ()=>{
     //     const orderType = document.querySelector('input[name="order_type"]:checked').value;
 

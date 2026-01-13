@@ -378,7 +378,7 @@
                         </a>
 
 
-                        <a href="{{url('admin/orders')}}" class="text-decoration-none">
+                        <a  href="{{ route('admin.logout') }}" class="text-decoration-none">
                             <li class="list-group-item d-flex align-items-center custom-border">
                                 <i class="bi bi-box-arrow-right me-2"></i> Logout
                             </li>

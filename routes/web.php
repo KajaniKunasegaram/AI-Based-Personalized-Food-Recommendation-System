@@ -14,11 +14,13 @@ use App\Http\Controllers\Admin\DeliveryController;
 use App\Http\Controllers\Admin\AdOrderController;
 use App\Http\Controllers\Admin\AdCustomerController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\AuthController;
+
 
 
 
 use App\Http\Controllers\Client\CartController;
-use App\Http\Controllers\Client\AuthController;
+// use App\Http\Controllers\Client\AuthController;
 use App\Http\Controllers\Client\CustomerController;
 use App\Http\Controllers\Client\PaymentController;
 use App\Http\Controllers\Client\ContactController;
@@ -33,10 +35,49 @@ use App\Models\ModifierGroupModel;
 
 
 
+
+
 // Admin Routes
 
+// Route::get('/', function () {
+//     return redirect()->to('/admin/orders');
+// });
 
+Route::get('/', function () {
+    return redirect()->route('admin.login');
+});
+
+
+Route::get('/admin/logout', function () {
+    session()->forget([
+        'admin_otp',
+        'admin_otp_verified'
+    ]);
+
+    return redirect()->route('admin.login');
+})->name('admin.logout');
 // Route::get('/admin/dashboard', fn() => view('admin.dashboard'));
+
+
+
+Route::get('/admin/login', [AuthController::class, 'loginForm'])->name('admin.login');
+
+// Safety: redirect GET request to login
+Route::get('/admin/send-otp', function() {
+    return redirect()->route('admin.login');
+});
+
+Route::post('/admin/send-otp', [AuthController::class, 'sendOtp'])->name('admin.sendOtp');
+Route::post('/admin/verifyOtp', [AuthController::class, 'verifyOtp'])->name('admin.verifyOtp');
+
+Route::middleware(['admin.otp'])->group(function () {
+    Route::get('/admin/orders', function () {
+        return view('admin.orders');
+    })->name('admin.orders');
+});
+
+
+
 
 Route::get('admin/dashboard', [DashboardController::class, 'index'])
     ->name('admin.dashboard');
