@@ -308,6 +308,12 @@
                         </li>
                     </a>
 
+                    <a href="{{url('admin/delivery-boys')}}" class="text-decoration-none">
+                        <li class="list-group-item d-flex align-items-center custom-border">
+                            <i class="bi bi-truck me-2"></i>Driver Configuration
+                        </li>
+                    </a>
+
                     <a href="{{url('admin/reviews')}}" class="text-decoration-none">
                         <li class="list-group-item d-flex align-items-center  custom-border">
                             <i class="bi bi-star me-2"></i> Reviews

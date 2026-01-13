@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\AdOrderController;
 use App\Http\Controllers\Admin\AdCustomerController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\DeliveryBoysController;
 
 
 
@@ -187,6 +188,20 @@ Route::prefix('admin')->group(function () {
     Route::post('/delivery-config/update/{id}', [DeliveryController::class, 'update']);
     Route::delete('/delivery-config/{id}', [DeliveryController::class, 'destroy']);
 });
+
+
+Route::get('/admin/delivery-boys', [DeliveryBoysController::class, 'index']);
+Route::post('/admin/delivery-boys', [DeliveryBoysController::class, 'store']);
+Route::get('/admin/delivery-boys/{id}', [DeliveryBoysController::class, 'edit']);
+Route::post('/admin/delivery-boys/update/{id}', [DeliveryBoysController::class, 'update']);
+Route::delete('/admin/delivery-boys/{id}', [DeliveryBoysController::class, 'destroy']);
+
+
+
+
+
+
+
 
 /* Client */
 Route::get('client/orders', [OrderController::class, 'index'])->name('orders');
