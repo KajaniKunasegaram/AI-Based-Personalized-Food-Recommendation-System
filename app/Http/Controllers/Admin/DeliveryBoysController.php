@@ -19,11 +19,13 @@ class DeliveryBoysController extends Controller
         $request->validate([
             'name' => 'required',
             'phone' => 'required',
+            'password' => 'required',
         ]);
 
         DB::table('tbl_delivery_boys')->insert([
             'name' => $request->name,
             'phone' => $request->phone,
+            'password' =>  $request->password,
         ]);
 
         return redirect()->back()->with('success', 'Delivery Boy added successfully');
@@ -40,11 +42,13 @@ class DeliveryBoysController extends Controller
         $request->validate([
             'name' => 'required',
             'phone' => 'required',
+              'password' => 'required',
         ]);
 
         DB::table('tbl_delivery_boys')->where('id', $id)->update([
             'name' => $request->name,
             'phone' => $request->phone,
+              'password' =>  $request->password,
         ]);
 
         return redirect()->back()->with('success', 'Delivery Boy updated successfully');

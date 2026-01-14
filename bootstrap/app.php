@@ -13,6 +13,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'admin.otp' => \App\Http\Middleware\AdminOtpMiddleware::class,
+                    'driver.auth' => \App\Http\Middleware\DriverAuthMiddleware::class, // <-- add here
+
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

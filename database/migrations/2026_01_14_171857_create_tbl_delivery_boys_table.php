@@ -12,10 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tbl_delivery_boys', function (Blueprint $table) {
-            $table->id();                 // Primary key
-            $table->string('name');       // Delivery boy name
-            $table->string('phone');      // Phone number
-            $table->timestamps();         // created_at & updated_at
+            $table->id();
+            $table->string('name');
+            $table->string('phone')->unique();
+            $table->string('password'); // add this
+            $table->timestamps();
         });
     }
 

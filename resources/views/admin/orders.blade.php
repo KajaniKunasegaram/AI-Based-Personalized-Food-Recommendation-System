@@ -18,6 +18,21 @@
                 <i class="fa-solid fa-truck"></i>
             </td>
         </div> -->
+        <!-- <div style="margin:15px 0">
+            <label><strong>Assign Delivery Boy</strong></label>
+            <select id="driverSelect" style="width:100%; padding:8px;">
+                <option value="">-- Select Driver --</option>
+                @foreach($drivers as $driver)
+                    <option value="{{ $driver->id }}">
+                        {{ $driver->name }} ({{ $driver->phone }})
+                    </option>
+                @endforeach
+            </select>
+
+            <button onclick="assignDriver()" style="margin-top:10px;width:100%;">
+                Assign Driver
+            </button>
+        </div> -->
 
         <div class="menu-container">
             <span class="menu-icon" onclick="toggleMenu(event)">⋮</span>
@@ -66,6 +81,8 @@
                     <th>Time</th>
                     <th>Amt</th>
                     <th>Mode</th>
+                    <th>Driver</th>
+
                 </tr>
             </thead>
             <tbody>
@@ -90,6 +107,22 @@
                     <td>
                         {{ $order->payment_type == 'card' ? '💳' : '💵' }}
                     </td>
+
+                    <td>
+                        @if($order->order_type === 'delivery')
+                            <select class="driverSelectInTable" data-order="{{ $order->id }}">
+                                <option value="">-- Select Driver --</option>
+                                @foreach($drivers as $driver)
+                                    <option value="{{ $driver->id }}" 
+                                        {{ $order->delivery_boy_id == $driver->id ? 'selected' : '' }}>
+                                        {{ $driver->name }} ({{ $driver->phone }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        @else
+                            <span>—</span> <!-- or leave empty -->
+                        @endif
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
@@ -97,6 +130,75 @@
     </div>
 
 </div>
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // Run CURRENT filter first
+        const currentBtn = document.querySelector('.status-tabs button.active');
+        filterStatus(currentBtn, 'new');
+
+        // Small delay to ensure rows are filtered
+        setTimeout(() => {
+            const firstVisibleRow = document.querySelector(
+                '#ordersTable tbody tr[data-status="new"]'
+            );
+
+            if (firstVisibleRow) {
+                const orderId = firstVisibleRow.querySelector('td').innerText;
+
+                // Load order details
+                loadOrder(orderId);
+
+                // Highlight selected row
+                // document.querySelectorAll('#ordersTable tbody tr')
+                //     .forEach(r => r.classList.remove('selected'));
+                // firstVisibleRow.classList.add('selected');
+            }
+        }, 50);
+    });
+</script>
+
+<script>
+
+    document.querySelectorAll('.driverSelectInTable').forEach(select => {
+        select.addEventListener('change', function() {
+            const orderId = this.dataset.order;
+            const driverId = this.value;
+
+            if(!driverId) return; // ignore if no driver selected
+
+            fetch(`/admin/orders/${orderId}/assign-driver`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ delivery_boy_id: driverId })
+            })
+            .then(res => {
+                if(!res.ok) throw new Error('Network error');
+                return res.json();
+            })
+            .then(data => {
+                if(data.success){
+                    alert('Driver assigned successfully');
+                    location.reload();
+                } else {
+                    alert('Something went wrong');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Failed to assign driver');
+            });
+        });
+    });
+</script>
+
+
 
 <script>
     let selectedOrderId = null;
@@ -128,10 +230,15 @@
                 if(data.status === 'completed'){
                     const watermark = document.createElement('div');
                     watermark.classList.add('watermark');
-                    watermark.innerText = 'PAID';
+                    watermark.innerText = 'COMPLETED';
                     orderDetailsCol.appendChild(watermark);
                 }
-
+                if(data.status === 'cancelled'){
+                    const watermark = document.createElement('div');
+                    watermark.classList.add('watermark');
+                    watermark.innerText = 'CANCELLED';
+                    orderDetailsCol.appendChild(watermark);
+                }
 
                 // Header row
                 itemsDiv.innerHTML += `
@@ -371,4 +478,6 @@
         printWindow.print();
     }
 </script>
+
+
 @endsection

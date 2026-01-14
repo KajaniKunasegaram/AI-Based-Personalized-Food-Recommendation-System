@@ -8,6 +8,7 @@ use App\Http\Controllers\ItemController;
 use App\Http\Controllers\ModifierGroupController;
 use App\Http\Controllers\ModifierController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\DriverController;
 
 use App\Http\Controllers\Admin\MenuLoaderController;
 use App\Http\Controllers\Admin\DeliveryController;
@@ -16,6 +17,9 @@ use App\Http\Controllers\Admin\AdCustomerController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DeliveryBoysController;
+
+use App\Http\Controllers\DriverAuthController;
+
 
 
 
@@ -91,7 +95,42 @@ Route::prefix('admin')->group(function () {
     Route::get('/orders', [AdOrderController::class, 'index'])->name('admin.orders');
     Route::get('/orders/{id}', [AdOrderController::class, 'show']);
     Route::post('/orders/{id}/status', [AdOrderController::class, 'updateStatus']);
+    Route::post('/orders/{id}/assign-driver',[AdOrderController::class, 'assignDriver']);
+    
 });
+
+
+// Driver login/logout
+Route::get('/driver/login', [DriverAuthController::class, 'showLoginForm']);
+Route::post('/driver/login', [DriverAuthController::class, 'login']);
+Route::get('/driver/logout', [DriverAuthController::class, 'logout']);
+Route::post('/driver/orders/{id}/status', [DriverController::class, 'updateStatus']);
+Route::get('/driver/orders/json', [DriverController::class, 'ordersJson']);
+
+// Driver orders (protected)
+// Route::middleware('driver.auth')->group(function () {
+//     Route::get('/driver/orders', [DriverController::class, 'index']);
+//     Route::get('/driver/orders/{id}', [DriverController::class, 'show']);
+// });
+
+
+Route::middleware('driver.auth')->group(function () {
+    Route::get('/driver/orders', [DriverController::class, 'index']);
+    Route::get('/driver/orders/{id}', [DriverController::class, 'show']);
+});
+
+
+// Route::prefix('driver')->group(function () {
+
+//     Route::get('/login', [DriverAuthController::class,'showLoginForm'])->name('driver.login');
+//     Route::post('/login', [DriverAuthController::class,'login'])->name('driver.login.submit');
+
+//     Route::middleware('auth:driver')->group(function () {
+//         Route::get('/orders', [DriverController::class,'orders'])->name('driver.orders');
+//         Route::post('/orders/{id}/status', [DriverController::class,'updateStatus'])->name('driver.orders.updateStatus');
+//         Route::get('/logout', [DriverAuthController::class,'logout'])->name('driver.logout');
+//     });
+// });
 
 
 Route::get('admin/take-payment', fn() => view('admin.take-payment'));

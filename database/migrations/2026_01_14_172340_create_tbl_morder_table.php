@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tbl_morder', function (Blueprint $table) {
-            $table->id();
+               $table->id();
             $table->unsignedBigInteger('customer_id');
             $table->enum('order_type', ['delivery', 'pickup'])->default('delivery');
             $table->text('delivery_address')->nullable();
@@ -23,6 +23,8 @@ return new class extends Migration
             $table->enum('payment_type', ['card', 'cash']);
             $table->enum('payment_status', ['pending', 'paid', 'failed'])->default('pending');
             $table->enum('status', ['new', 'on_the_way', 'completed', 'cancelled'])->default('new');
+            $table->unsignedBigInteger('delivery_boy_id')
+                ->nullable();
             $table->timestamps();
         });
     }

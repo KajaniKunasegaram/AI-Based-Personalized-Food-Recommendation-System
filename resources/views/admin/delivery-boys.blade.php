@@ -210,6 +210,7 @@
             <div class="mile-row-dis delivery-item" data-id="{{ $boy->id }}">
                 <span class="mile-left">{{ $boy->name }}</span>
                 <span class="mile-right">{{ $boy->phone }}</span>
+                <!-- <span class="mile-right">{{ $boy->password }}</span> -->
             </div>
         @endforeach
     </div>
@@ -228,6 +229,7 @@
             <input type="hidden" id="delivery-id">
             <input type="text" name="name" id="name" class="form-control" placeholder="Name" required>
             <input type="text" name="phone" id="phone" class="form-control" placeholder="Phone" required>
+            <input type="password" name="password" id="password" class="form-control" placeholder="Password" required>
 
             <div class="action-buttons">
                 <button type="button" class="btn-reset" id="reset-form">RESET</button>
@@ -250,6 +252,8 @@ document.querySelectorAll('.delivery-item').forEach(item => {
                 document.getElementById('delivery-id').value = data.id;
                 document.getElementById('name').value = data.name;
                 document.getElementById('phone').value = data.phone;
+                document.getElementById('password').value = data.password; // blank, can enter new password
+
 
                 document.getElementById('form-heading').innerText = 'Update Delivery Boy';
                 document.getElementById('submit-button').innerText = 'UPDATE';

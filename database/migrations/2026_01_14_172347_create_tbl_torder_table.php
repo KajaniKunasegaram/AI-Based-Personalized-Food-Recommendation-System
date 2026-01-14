@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tbl_torder', function (Blueprint $table) {
-             $table->id();
+               $table->id(); // ✅ FIXED
             $table->unsignedBigInteger('order_id');
             $table->unsignedBigInteger('item_id');
             $table->string('item_name');
@@ -22,7 +22,10 @@ return new class extends Migration
             $table->json('modifiers')->nullable();
             $table->timestamps();
 
-            $table->foreign('order_id')->references('id')->on('tbl_morder')->onDelete('cascade');
+            $table->foreign('order_id')
+                  ->references('id')
+                  ->on('tbl_morder')
+                  ->onDelete('cascade');
         });
     }
 
