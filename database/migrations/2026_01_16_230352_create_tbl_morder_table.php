@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tbl_morder', function (Blueprint $table) {
-               $table->id();
+           $table->id();
             $table->unsignedBigInteger('customer_id');
             $table->enum('order_type', ['delivery', 'pickup'])->default('delivery');
             $table->text('delivery_address')->nullable();

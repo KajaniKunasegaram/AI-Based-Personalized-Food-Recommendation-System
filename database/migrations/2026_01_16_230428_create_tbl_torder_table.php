@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tbl_torder', function (Blueprint $table) {
-               $table->id(); // ✅ FIXED
+              $table->id(); // ✅ FIXED
             $table->unsignedBigInteger('order_id');
             $table->unsignedBigInteger('item_id');
             $table->string('item_name');
