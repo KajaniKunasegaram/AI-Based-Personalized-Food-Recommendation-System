@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\CustomerModel;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+
 
 
 class CustomerController extends Controller
@@ -22,6 +24,7 @@ class CustomerController extends Controller
 
         // Create customer
         CustomerModel::create([
+            'id' => hash('sha256', Str::uuid()), // 🔥 HASH ID
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password), // encrypt password

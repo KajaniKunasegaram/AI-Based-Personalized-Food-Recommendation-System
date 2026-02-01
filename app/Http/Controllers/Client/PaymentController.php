@@ -64,6 +64,7 @@ class PaymentController extends Controller
 
         // 1️⃣ Create Master Order
         $mOrder = MOrderModel::create([
+            
             'customer_id' => session('customer_id'),
             'order_type' => $orderType,
             'delivery_address' => $address,

@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('tbl_morder', function (Blueprint $table) {
            $table->id();
-            $table->unsignedBigInteger('customer_id');
+           $table->string('customer_id', 100);
+            // $table->unsignedBigInteger('customer_id');
             $table->enum('order_type', ['delivery', 'pickup'])->default('delivery');
             $table->text('delivery_address')->nullable();
             $table->decimal('service_charge', 10, 2)->default(0);

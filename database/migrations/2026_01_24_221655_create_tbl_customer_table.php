@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tbl_customer', function (Blueprint $table) {
-                 $table->id();
+              $table->string('id', 64)->primary();   // HASH ID
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');

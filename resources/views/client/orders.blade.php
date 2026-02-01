@@ -73,7 +73,22 @@
             <div class="menu-content">
 
                 <!-- RECOMMENDED SECTION -->
-                <div class="recommended">
+                 <div class="recommended">
+                    <h4>👍 RECOMMENDED FOR YOU</h4>
+                    <div class="recommended-items">
+                        @forelse($recommendedItems as $recItem)
+                            <div class="item-box" onclick="openItemPopup({{ $recItem->item_id }})">
+                                <strong>{{ $recItem->item_name }}</strong><br>
+                                £{{ number_format($recItem->item_price, 2) }}
+                            </div>
+                        @empty
+                            <p style="padding-left: 15px; color: gray; font-size: 0.8rem;">
+                                Order more to see personalized suggestions!
+                            </p>
+                        @endforelse
+                    </div>
+                </div>
+                <!-- <div class="recommended">
                     <h4>👍 RECOMMENDED FOR YOU</h4>
                     <div class="recommended-items">
                         <div class="item-box">apple cake<br>£5.00</div>
@@ -81,7 +96,7 @@
                         <div class="item-box">Biscoff Milkshake<br>£5.00</div>
                          <div class="item-box">Biscoff Milkshake<br>£5.00</div>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- CATEGORY SECTION -->
 
