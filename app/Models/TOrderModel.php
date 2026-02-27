@@ -11,6 +11,8 @@ class TOrderModel extends Model
 
     protected $table = 'tbl_torder';
 
+    // protected $primaryKey = 'torder_id';
+    
     protected $fillable = [
         'order_id', 'item_id', 'item_name', 'quantity',
         'unit_price', 'total_price', 'modifiers'
@@ -25,4 +27,8 @@ class TOrderModel extends Model
     {
         return $this->belongsTo(MOrderModel::class, 'order_id');
     }
+    //  public function item()
+    // {
+    //     return $this->belongsTo(ItemModel::class, 'item_id');
+    // }
 }

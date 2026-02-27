@@ -7,9 +7,25 @@
         <div class="order-container">
             <div class="image-box">
 
-                <button class="search-btn">
+                <button class="search-btn" onclick="toggleSearch()">
                     <i class="fa fa-search"></i> 
                 </button>
+
+                <!-- Search Bar -->
+                <div class="search-bar-container" id="searchBarContainer" style="display:none;">
+                    <i class="fa fa-search" style="color:#aaa; margin-right:8px;"></i>
+                    <input type="text" id="searchInput" placeholder="Search items..." oninput="searchItems()">
+                    <button class="search-close-btn" onclick="closeSearch()">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+
+                <!-- Search Results Popup -->
+                <div class="search-results-overlay" id="searchOverlay" style="display:none;">
+                    <div class="search-results-box" id="searchResultsBox">
+                        <!-- results here -->
+                    </div>
+                </div>
 
                 <img src="{{asset('images/client/bg.jpg')}}" class="order-img">
 
@@ -43,8 +59,10 @@
                     </div>
                     <div class="info-right">
                         <div class="review-section">
-                            <i class="fa fa-star" style="color: #f7d410ff;"></i> 4.8 (230+ reviews)
-                            <a href="#" class="review-link"> <i class="fa fa-circle-info info-icon"></i> Info</a>
+                                <a href="{{ route('reviews') }}" style="text-decoration:none; color:inherit;">
+                                    <i class="fa fa-star" style="color: #f7d410ff;"></i> 4.8 (230+ reviews)
+                                </a>
+                            <a href="{{ route('client.contact') }}" class="review-link"> <i class="fa fa-circle-info info-icon"></i> Info</a>
                         </div>
                     </div>
                 </div>
@@ -60,7 +78,7 @@
                 <ul>
                     <li class="active" data-target="all-items">All Items</li>
                     @foreach($categories as $category)
-                        <li>
+                        <li data-target="category-{{ $category->cat_id }}">
                             <!-- <a href="#category-{{ $category->cat_id }}"> -->
                                 {{ $category->cat_name }}
                             <!-- </a> -->
@@ -72,14 +90,21 @@
             <!-- RIGHT CONTENT -->
             <div class="menu-content">
 
-                <!-- RECOMMENDED SECTION -->
-                 <div class="recommended">
-                    <h4>👍 RECOMMENDED FOR YOU</h4>
+                <div class="recommended">
+                    {{-- Title changes based on recommendation type --}}
+                    <h4>
+                        @if($recommendationType === 'ai')
+                            👍 RECOMMENDED ITEMS FOR YOU
+                        @else
+                            🔥 POPULAR ITEMS FOR YOU
+                        @endif
+                    </h4>
+
                     <div class="recommended-items">
-                        @forelse($recommendedItems as $recItem)
-                            <div class="item-box" onclick="openItemPopup({{ $recItem->item_id }})">
-                                <strong>{{ $recItem->item_name }}</strong><br>
-                                £{{ number_format($recItem->item_price, 2) }}
+                        @forelse($recommendedItems as $item)
+                            <div class="item-box" onclick="openItemPopup({{ $item->item_id }})">
+                                <strong>{{ $item->item_name }}</strong><br>
+                                £{{ number_format($item->item_price, 2) }}
                             </div>
                         @empty
                             <p style="padding-left: 15px; color: gray; font-size: 0.8rem;">
@@ -88,57 +113,49 @@
                         @endforelse
                     </div>
                 </div>
-                <!-- <div class="recommended">
-                    <h4>👍 RECOMMENDED FOR YOU</h4>
-                    <div class="recommended-items">
-                        <div class="item-box">apple cake<br>£5.00</div>
-                        <div class="item-box">juice<br>£3.50</div>
-                        <div class="item-box">Biscoff Milkshake<br>£5.00</div>
-                         <div class="item-box">Biscoff Milkshake<br>£5.00</div>
-                    </div>
-                </div> -->
 
-                <!-- CATEGORY SECTION -->
+              
+                <div class="menu-content1">
+                    <!-- CATEGORY SECTION -->
+                    @foreach($categories as $category)
+                    <div class="category-section" id="category-{{ $category->cat_id }}">
+                        <!-- CATEGORY NAME -->
+                        <h2>{{ $category->cat_name }}</h2>
 
-                @foreach($categories as $category)
-                <div class="category-section" id="category-{{ $category->cat_id }}">
-                    <!-- CATEGORY NAME -->
-                    <h2>{{ $category->cat_name }}</h2>
+                        @foreach($category->subCategories as $subCategory)
+                            <div class="category-item">
 
-                    @foreach($category->subCategories as $subCategory)
-                        <div class="category-item">
-
-                            <!-- SUB CATEGORY HEADER -->
-                            <div class="category-header">
-                                <div class="left-title">
-                                    {{ $subCategory->sub_cat_name }}
-                                </div>
-
-                                <div class="right-image">
-                                    <img src="{{ asset($subCategory->image ?? 'images/client/background.jpg') }}" alt="">
-                                </div>
-                            </div>
-
-                            <!-- SUB CATEGORY DESCRIPTION -->
-                            <p>{{ $subCategory->description }}</p>
-
-                            <!-- ITEMS -->
-                            <div class="sizes">
-                                @foreach($subCategory->items as $item)
-                                    <div class="size-box"
-                                        onclick="openItemPopup({{ $item->item_id }})"
-                                        data-name="{{ $item->item_name }}"
-                                        data-price="{{ $item->item_price }}">
-                                        <strong>{{ $item->item_name }}</strong><br>
-                                        £{{ number_format($item->item_price, 2) }}
+                                <!-- SUB CATEGORY HEADER -->
+                                <div class="category-header">
+                                    <div class="left-title">
+                                        {{ $subCategory->sub_cat_name }}
                                     </div>
-                                @endforeach
+
+                                    <div class="right-image">
+                                        <img src="{{ asset('storage/' . $subCategory->sub_cat_image ?? 'images/client/background.jpg') }}" alt="">
+                                    </div>
+                                </div>
+
+                                <!-- SUB CATEGORY DESCRIPTION -->
+                                <p>{{ $subCategory->description }}</p>
+
+                                <!-- ITEMS -->
+                                <div class="sizes">
+                                    @foreach($subCategory->items as $item)
+                                        <div class="size-box"
+                                            onclick="openItemPopup({{ $item->item_id }})"
+                                            data-name="{{ $item->item_name }}"
+                                            data-price="{{ $item->item_price }}">
+                                            <strong>{{ $item->item_name }}</strong><br>
+                                            £{{ number_format($item->item_price, 2) }}
+                                        </div>
+                                    @endforeach
+                                </div>
                             </div>
-                        </div>
+                        @endforeach
+                    </div>
                     @endforeach
                 </div>
-                @endforeach
-
                
             </div>
         </div>        
@@ -461,6 +478,175 @@
             // optional: check which is selected
             console.log("Selected:", option.dataset.type);
         });
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const sidebarItems = document.querySelectorAll('.sidebar ul li');
+        const categorySections = document.querySelectorAll('.category-section');
+        const menuContent = document.querySelector('.menu-content');
+        const recommended = document.querySelector('.recommended');
+
+        // ── 1. Click → Filter ──────────────────────────────────────
+        sidebarItems.forEach((li) => {
+            li.addEventListener('click', () => {
+
+                // Remove active from all
+                sidebarItems.forEach(l => l.classList.remove('active'));
+                li.classList.add('active');
+
+                const target = li.dataset.target;
+
+                if (target === 'all-items') {
+                    // Show recommended
+                    recommended.style.display = 'block';
+
+                    // Show ALL category sections
+                    categorySections.forEach(section => {
+                        section.style.display = 'block';
+                    });
+
+                    menuContent.scrollTo({ top: 0, behavior: 'smooth' });
+
+                } else {
+                    // Hide recommended
+                    recommended.style.display = 'none';
+
+                    // Hide ALL, show only clicked one
+                    categorySections.forEach(section => {
+                        if (section.id === target) {
+                            section.style.display = 'block';
+                        } else {
+                            section.style.display = 'none';
+                        }
+                    });
+
+                    menuContent.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            });
+        });
+
+        // ── 2. Scroll → Highlight active sidebar (All Items mode only) ──
+        menuContent.addEventListener('scroll', () => {
+
+            // Check if all sections are visible (All Items mode)
+            const allVisible = [...categorySections].every(s => s.style.display !== 'none');
+            if (!allVisible) return; // filter mode la highlight வேண்டாம்
+
+            let currentId = null;
+
+            categorySections.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                const menuRect = menuContent.getBoundingClientRect();
+                if (rect.top - menuRect.top <= 80) {
+                    currentId = section.id;
+                }
+            });
+
+            sidebarItems.forEach(li => {
+                li.classList.remove('active');
+                if (currentId && li.dataset.target === currentId) {
+                    li.classList.add('active');
+                } else if (!currentId && li.dataset.target === 'all-items') {
+                    li.classList.add('active');
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    // All items data from blade
+    const allItemsData = [
+        @foreach($categories as $category)
+            @foreach($category->subCategories as $subCategory)
+                @foreach($subCategory->items as $item)
+                {
+                    id: {{ $item->item_id }},
+                    name: "{{ addslashes($item->item_name) }}",
+                    price: "{{ number_format($item->item_price, 2) }}",
+                    category: "{{ addslashes($category->cat_name) }}",
+                    subCategory: "{{ addslashes($subCategory->sub_cat_name) }}"
+                },
+                @endforeach
+            @endforeach
+        @endforeach
+    ];
+
+    function toggleSearch() {
+        const container = document.getElementById('searchBarContainer');
+        if (container.style.display === 'none') {
+            container.style.display = 'flex';
+            document.getElementById('searchInput').focus();
+        } else {
+            closeSearch();
+        }
+    }
+
+    function closeSearch() {
+        document.getElementById('searchBarContainer').style.display = 'none';
+        document.getElementById('searchOverlay').style.display = 'none';
+        document.getElementById('searchResultsBox').innerHTML = '';
+        document.getElementById('searchInput').value = '';
+    }
+
+    function searchItems() {
+        const query = document.getElementById('searchInput').value.trim().toLowerCase();
+        const overlay = document.getElementById('searchOverlay');
+        const resultsBox = document.getElementById('searchResultsBox');
+
+        if (query === '') {
+            overlay.style.display = 'none';
+            resultsBox.innerHTML = '';
+            return;
+        }
+
+        // Filter items
+        const matched = allItemsData.filter(item =>
+            item.name.toLowerCase().includes(query)
+        );
+
+        overlay.style.display = 'block';
+
+        if (matched.length === 0) {
+            resultsBox.innerHTML = `
+                <div class="search-no-result">
+                    <i class="fa fa-search" style="font-size:2rem; margin-bottom:10px; display:block;"></i>
+                    No items found for "<strong>${query}</strong>"
+                </div>
+            `;
+            return;
+        }
+
+        resultsBox.innerHTML = matched.map(item => `
+            <div class="search-result-item" onclick="selectSearchItem(${item.id})">
+                <div>
+                    <div class="result-name">${highlightMatch(item.name, query)}</div>
+                    <div class="result-category">${item.category} → ${item.subCategory}</div>
+                </div>
+                <div class="result-price">£${item.price}</div>
+            </div>
+        `).join('');
+    }
+
+    // Highlight matched text
+    function highlightMatch(text, query) {
+        const regex = new RegExp(`(${query})`, 'gi');
+        return text.replace(regex, '<mark style="background:#fff3cd; border-radius:3px; padding:0 2px;">$1</mark>');
+    }
+
+    // Click result → open item popup
+    function selectSearchItem(itemId) {
+        closeSearch();
+        openItemPopup(itemId);
+    }
+
+    // Close overlay if clicked outside results box
+    document.getElementById('searchOverlay').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeSearch();
+        }
     });
 </script>
 @endsection
