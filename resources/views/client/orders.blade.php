@@ -33,11 +33,39 @@
                     <div class="info-left">
                         <h3 class="title">Master Chef</h3>
 
+                        {{-- ✅ Website Status Banner --}}
+                        @if(isset($websiteStatus) && $websiteStatus)
+                            @if($websiteStatus->status === 'closed_today')
+                                <div class="shop-status-banner closed-today">
+                                    <i class="fa fa-clock"></i>
+                                    Closed for today — We'll be back tomorrow!
+                                </div>
+                            @elseif($websiteStatus->status === 'closed_until')
+                                <div class="shop-status-banner closed-until">
+                                    <i class="fa fa-calendar-xmark"></i>
+                                    Closed until {{ \Carbon\Carbon::parse($websiteStatus->reopen_date)->format('d M Y') }}
+                                    @if($websiteStatus->message)
+                                        — {{ $websiteStatus->message }}
+                                    @endif
+                                </div>
+                            @elseif($websiteStatus->status === 'closed')
+                                <div class="shop-status-banner closed">
+                                    <i class="fa fa-circle-xmark"></i>
+                                    Currently Closed — Please check back later
+                                </div>
+                            @else
+                                <div class="shop-status-banner open">
+                                    <i class="fa fa-circle-check"></i>
+                                    Open — Accepting orders now!
+                                </div>
+                            @endif
+                        @endif
+
                         <!-- <p class="desc">Start your day with us! Fresh, warm and made with love.</p> -->
 
                         <p class="address">
                             <i class="fa fa-location-dot"></i> 
-                            31, Uppukkulam Road, Columbuthurai, Jaffna 40000.
+                            15 Baker Street, London W1U 3BW, United Kingdom.
                         </p>
 
                         <div class="delivery-pickup">
@@ -102,7 +130,7 @@
 
                     <div class="recommended-items">
                         @forelse($recommendedItems as $item)
-                            <div class="item-box" onclick="openItemPopup({{ $item->item_id }})">
+                            <div class="item-box"  onclick="openItemPopup({{ $item->item_id }})">
                                 <strong>{{ $item->item_name }}</strong><br>
                                 £{{ number_format($item->item_price, 2) }}
                             </div>

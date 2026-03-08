@@ -1,7 +1,7 @@
 @extends('admin.layout')
 
-@section('title','Delivery Boys')
-@section('page_title','Delivery Boys')
+@section('title','Delivery Configuration')
+@section('page_title','Delivery Configuration')
 
 @section('content')
 
@@ -206,6 +206,13 @@
 <div class="contain">
     <!-- Left Panel: List -->
     <div class="left-panel">
+         <div class="distance-limit">
+            <div>Distance Limit</div>
+            <div class="distance-value" id="open-popup">
+                <span id="selected-mile-text" class="selected-mile"></span>
+                ▶
+            </div>
+        </div>
         @foreach($deliveryBoys as $boy)
             <div class="mile-row-dis delivery-item" data-id="{{ $boy->id }}">
                 <span class="mile-left">{{ $boy->name }}</span>
@@ -236,6 +243,41 @@
                 <button type="submit" class="btn-add" id="submit-button">ADD</button>
             </div>
         </form>
+    </div>
+</div>
+
+
+  <!-- POPUP -->
+<div class="popup-overlay" id="distance-popup">
+    <div class="popup-box">
+        <h3>Select Distance</h3>
+
+        <div class="popup-columns">
+
+            <!-- Column 1 : 0.5 → 14.5 -->
+            <div>
+                @for ($i = 0.5; $i <= 14.5; $i += 1)
+                    <label class="mile-row">
+                        <input type="radio" name="mile" value="{{ $i }}">
+                        {{ number_format($i,1) }} miles
+                    </label>
+                @endfor
+            </div>
+
+            <!-- Column 2 : 1 → 15 -->
+            <div>
+                @for ($i = 1; $i <= 15; $i++)
+                    <label class="mile-row">
+                        <input type="radio" name="mile" value="{{ $i }}">
+                        {{ $i }} miles
+                    </label>
+                @endfor
+            </div>
+
+        </div>
+
+        <br>
+        <button onclick="closePopup()" class="btn btn-dark" style="width:100%;">Close</button>
     </div>
 </div>
 
@@ -275,13 +317,101 @@ document.querySelectorAll('.delivery-item').forEach(item => {
     });
 });
 
+
 document.getElementById('reset-form').addEventListener('click', function() {
+
     const form = document.getElementById('delivery-form');
     form.reset();
+
+    // 🔥 Reset heading & button
     document.getElementById('form-heading').innerText = 'Add Delivery Boy';
     document.getElementById('submit-button').innerText = 'ADD';
+
+    // 🔥 Clear hidden ID
     document.getElementById('delivery-id').value = '';
+
+    // 🔥 Reset form action back to CREATE route
+    form.action = "{{ url('/admin/delivery-boys') }}";
+
+    // 🔥 Hide delete icon
     document.getElementById('delete-icon-container').style.display = 'none';
+
+    // 🔥 Remove active selection
+    document.querySelectorAll('.delivery-item').forEach(el => el.classList.remove('active'));
 });
+</script>
+<script>
+     document.getElementById("open-popup").addEventListener("click", function() {
+        document.getElementById("distance-popup").style.display = "flex";
+    });
+
+    function closePopup() {
+        document.getElementById("distance-popup").style.display = "none";
+    }
+
+    document.querySelectorAll("input[name='mile']").forEach(radio => {
+        radio.addEventListener("change", function() {
+
+            let selectedValue = this.value + " miles";
+
+            document.getElementById("selected-mile-text").innerText = selectedValue;
+
+            closePopup();
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        let savedMile = localStorage.getItem('selected_mile');
+        let savedValue = localStorage.getItem('selected_mile_value');
+
+        // ✅ If no mile selected yet → default 5 miles
+        if (!savedMile) {
+            savedMile = '5 miles';
+            savedValue = '5';
+
+            localStorage.setItem('selected_mile', savedMile);
+            localStorage.setItem('selected_mile_value', savedValue);
+        }
+
+        // Show in UI
+        document.getElementById('selected-mile-text').innerText = savedMile;
+
+        // Auto check radio
+        let radio = document.querySelector(`input[name="mile"][value="${savedValue}"]`);
+        if (radio) {
+            radio.checked = true;
+        }
+    });
+
+    document.querySelectorAll("input[name='mile']").forEach(radio => {
+        radio.addEventListener("change", function () {
+
+            let selectedValue = this.value + " miles";
+
+            // Update UI
+            document.getElementById("selected-mile-text").innerText = selectedValue;
+
+            // Save selection
+            localStorage.setItem('selected_mile', selectedValue);
+            localStorage.setItem('selected_mile_value', this.value);
+
+            closePopup();
+        });
+    });
+
+    // Radio button logic
+    const radios = document.getElementsByName("delivery_type");
+    const chargeBox = document.getElementById("charge-input-box");
+
+    radios.forEach(radio => {
+        radio.addEventListener("change", () => {
+            if (radio.value === "charge") {
+                chargeBox.style.display = "block";
+            } else {
+                chargeBox.style.display = "none";
+            }
+        });
+    });
 </script>
 @endsection

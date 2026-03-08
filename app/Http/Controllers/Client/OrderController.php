@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Client;
 use App\Models\CategoryModel;
 use App\Models\ItemModel;
+use App\Models\WebsiteStatusModel;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,42 +16,119 @@ use App\Services\RecommendationService;
 class OrderController extends Controller
 {
 
-  public function index(RecommendationService $recommendationService)
-    {
-        $categories = CategoryModel::with(['subCategories.items'])
-                        ->where('cat_status', 1)
-                        ->orderBy('cat_id')
-                        ->get();
+public function index(RecommendationService $recommendationService)
+{
+    $categories = CategoryModel::with(['subCategories.items'])
+                    ->where('cat_status', 1)
+                    ->orderBy('cat_id')
+                    ->get();
 
-        Log::info('Fetched Categories', ['count' => $categories->count()]);
+    $websiteStatus = WebsiteStatusModel::latest()->first();
 
-        $recommendedItems      = collect();
-        $recommendationType    = null;   // 'ai' or 'popular'
+    Log::info('Fetched Categories', ['count' => $categories->count()]);
 
-        $customerId = session('customer_id');
+    $recommendedItems      = collect();
+    $recommendationType    = null;
 
-        Log::info('Customer ID from session', ['customer_id' => $customerId]);
+    $customerId = session('customer_id');
 
-        if ($customerId) {
-            $result = $recommendationService->getRecommendations($customerId);
+    Log::info('Customer ID from session', ['customer_id' => $customerId]);
 
-            // RecommendationService now returns array with 'items' and 'type'
-            $recommendedItemIds  = $result['items'];
-            $recommendationType  = $result['type'];   // 'ai' or 'popular'
+    if ($customerId) {
 
-            Log::info('Recommendations received', [
-                'customer_id' => $customerId,
-                'type'        => $recommendationType,
-                'item_ids'    => $recommendedItemIds,
-            ]);
+        // Logged in → AI recommendation
+        $result = $recommendationService->getRecommendations($customerId);
 
-            if ($recommendedItemIds->isNotEmpty()) {
-                $recommendedItems = ItemModel::whereIn('item_id', $recommendedItemIds->toArray())->get();
-            }
+        $recommendedItemIds  = $result['items'];
+        $recommendationType  = $result['type']; 
+
+        Log::info('Recommendations received', [
+            'customer_id' => $customerId,
+            'type'        => $recommendationType,
+            'item_ids'    => $recommendedItemIds,
+        ]);
+
+        if ($recommendedItemIds->isNotEmpty()) {
+
+            $recommendedItems = ItemModel::whereIn('item_id', $recommendedItemIds->toArray())
+                                ->where('item_status',1)
+                                ->get();
         }
 
-        return view('client.orders', compact('categories', 'recommendedItems', 'recommendationType'));
+    } else {
+
+        // ❗ Logout user → Popular items
+        Log::info('Guest user → showing popular items');
+
+        $recommendedItems = ItemModel::select(
+                                'tbl_items.item_id',
+                                'tbl_items.item_name',
+                                'tbl_items.item_price'
+                            )
+                            ->join('tbl_torder','tbl_items.item_id','=','tbl_torder.item_id')
+                            ->join('tbl_morder','tbl_torder.order_id','=','tbl_morder.id')
+                            ->groupBy(
+                                'tbl_items.item_id',
+                                'tbl_items.item_name',
+                                'tbl_items.item_price'
+                            )
+                            ->orderByRaw('COUNT(tbl_torder.item_id) DESC')
+                            ->limit(6)
+                            ->get();
+
+        $recommendationType = 'popular';
     }
+
+    return view('client.orders', compact(
+        'categories',
+        'recommendedItems',
+        'recommendationType',
+        'websiteStatus'
+    ));
+}
+
+
+
+//   public function index(RecommendationService $recommendationService)
+//     {
+//         $categories = CategoryModel::with(['subCategories.items'])
+//                         ->where('cat_status', 1)
+//                         ->orderBy('cat_id')
+//                         ->get();
+
+//         $websiteStatus = WebsiteStatusModel::latest()->first();
+
+//         Log::info('Fetched Categories', ['count' => $categories->count()]);
+
+//         $recommendedItems      = collect();
+//         $recommendationType    = null;   // 'ai' or 'popular'
+
+//         $customerId = session('customer_id');
+
+//         Log::info('Customer ID from session', ['customer_id' => $customerId]);
+
+//         if ($customerId) {
+//             $result = $recommendationService->getRecommendations($customerId);
+
+//             // RecommendationService now returns array with 'items' and 'type'
+//             $recommendedItemIds  = $result['items'];
+//             $recommendationType  = $result['type'];   // 'ai' or 'popular'
+
+//             Log::info('Recommendations received', [
+//                 'customer_id' => $customerId,
+//                 'type'        => $recommendationType,
+//                 'item_ids'    => $recommendedItemIds,
+//             ]);
+
+//             if ($recommendedItemIds->isNotEmpty()) {
+//                 $recommendedItems = ItemModel::whereIn('item_id', $recommendedItemIds->toArray())->get();
+//             }
+//         }
+
+//         return view('client.orders', compact('categories', 'recommendedItems', 'recommendationType','websiteStatus'));
+//     }
+
+
 
     // public function index(RecommendationService $recommendationService)
     // {
@@ -83,9 +161,14 @@ class OrderController extends Controller
     //     return view('client.orders', compact('categories', 'recommendedItems'));
     // }
 
-// public function index(RecommendationService $recommendationService)
-// {
-//     $categories = CategoryModel::with(['subCategories.items'])
+
+
+    // public function index(RecommendationService $recommendationService)
+
+
+    // {
+
+    //     $categories = CategoryModel::with(['subCategories.items'])
 //                     ->where('cat_status', 1)
 //                     ->orderBy('cat_id')
 //                     ->get();

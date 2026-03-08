@@ -283,12 +283,16 @@
                             <i class="bi bi-wallet me-2"></i>Take Payment
                         </li>
                     </a>
-                    
-                    <a href="{{url('admin/website-status')}}" class="text-decoration-none">
-                        <li class="list-group-item d-flex align-items-center  custom-border">
+                    <a href="{{ route('admin.website.status') }}" class="text-decoration-none">
+                        <li class="list-group-item d-flex align-items-center custom-border">
                             <i class="bi bi-house-door me-2"></i> Website Status
                         </li>
                     </a>
+                    <!-- <a href="{{url('admin/website-status')}}" class="text-decoration-none">
+                        <li class="list-group-item d-flex align-items-center  custom-border">
+                            <i class="bi bi-house-door me-2"></i> Website Status
+                        </li>
+                    </a> -->
 
                     <a href="{{ route('admin.customers') }}" class="text-decoration-none">
                         <li class="list-group-item d-flex align-items-center  custom-border">
@@ -302,15 +306,15 @@
                         </li>
                     </a>
 
-                    <a href="{{url('admin/delivery-config')}}" class="text-decoration-none">
+                    <!-- <a href="{{url('admin/delivery-config')}}" class="text-decoration-none">
                         <li class="list-group-item d-flex align-items-center custom-border">
                             <i class="bi bi-truck me-2"></i>Delivery Configuration
                         </li>
-                    </a>
+                    </a> -->
 
                     <a href="{{url('admin/delivery-boys')}}" class="text-decoration-none">
                         <li class="list-group-item d-flex align-items-center custom-border">
-                            <i class="bi bi-truck me-2"></i>Driver Configuration
+                            <i class="bi bi-truck me-2"></i>Delivery Configuration
                         </li>
                     </a>
 

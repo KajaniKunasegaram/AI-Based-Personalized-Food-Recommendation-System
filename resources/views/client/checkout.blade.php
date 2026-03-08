@@ -148,6 +148,28 @@
 <script src="https://js.stripe.com/v3/"></script>
 
 <script>
+    const SHOP_LAT = 51.5226;
+    const SHOP_LNG = -0.1571;
+
+
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 3958.8; // Miles
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+
+        const a =
+            Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(lat1 * Math.PI/180) *
+            Math.cos(lat2 * Math.PI/180) *
+            Math.sin(dLon/2) * Math.sin(dLon/2);
+
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
+    }
+</script>
+
+
+<script>
 document.addEventListener('DOMContentLoaded', () => {
     const cart = @json($cart);
     const payBtn = document.getElementById('payBtn');
@@ -172,18 +194,43 @@ document.addEventListener('DOMContentLoaded', () => {
     const isLoggedIn = {{ session()->has('customer_id') ? 'true' : 'false' }};
 
     /* ---------------- Delivery / Pickup Toggle ---------------- */
+
     function updateOrderType(type) {
-         if(type === 'delivery') {
-                deliveryChargeRow.style.display = 'flex';
-                addressText.innerText = 'Delivery Address needed to fulfill the order';
-                addressText.classList.remove('selected-address');
-            } else {
-                deliveryChargeRow.style.display = 'none';
-                addressText.innerText = 'In-Store'; // Pickup address
-                addressText.classList.add('selected-address');
-            }
-            calculateFinalTotal();
+    if (type === 'delivery') {
+        deliveryChargeRow.style.display = 'flex';
+        
+        // ✅ Restore saved address if exists
+        const savedAddress = localStorage.getItem('selected_address');
+        if (savedAddress) {
+            addressText.classList.add('selected-address');
+            addressText.innerHTML = `<strong>${savedAddress}</strong>`;
+        } else {
+            addressText.classList.remove('selected-address');
+            addressText.innerText = 'Delivery Address needed to fulfill the order';
+        }
+
+    } else {
+        deliveryChargeRow.style.display = 'none';
+        
+        // ✅ Show In-Store but DON'T delete saved address
+        addressText.classList.add('selected-address');
+        addressText.innerText = 'In-Store';
     }
+    calculateFinalTotal();
+}
+
+    // function updateOrderType(type) {
+    //      if(type === 'delivery') {
+    //             deliveryChargeRow.style.display = 'flex';
+    //             addressText.innerText = 'Delivery Address needed to fulfill the order';
+    //             addressText.classList.remove('selected-address');
+    //         } else {
+    //             deliveryChargeRow.style.display = 'none';
+    //             addressText.innerText = 'In-Store'; // Pickup address
+    //             addressText.classList.add('selected-address');
+    //         }
+    //         calculateFinalTotal();
+    // }
 
     document.querySelectorAll('input[name="order_type"]').forEach(radio => {
         radio.addEventListener('change', e => {
@@ -196,6 +243,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const savedOrderType = localStorage.getItem('order_type') || 'delivery';
         document.querySelector(`input[name="order_type"][value="${savedOrderType}"]`).checked = true;
         updateOrderType(savedOrderType);
+
+         const savedAddress = localStorage.getItem('selected_address');
+        if (savedAddress) {
+            addressText.classList.add('selected-address');
+            addressText.innerHTML = `<strong>${savedAddress}</strong>`;
+        }s
+
         calculateFinalTotal();
     });
 
@@ -307,17 +361,73 @@ document.addEventListener('DOMContentLoaded', () => {
             }).catch(()=>addressList.innerHTML=`<p style="padding:10px;color:red">Error loading addresses</p>`);
     }
 
-    window.fetchFullAddress = postcode=>{
-        fetch(`https://api.postcodes.io/postcodes/${postcode}`)
-            .then(res=>res.json())
-            .then(data=>{
-                if(data.status===200 && data.result){
-                    const r = data.result;
-                    const fullAddress = `${r.admin_ward}, ${r.parish}, ${r.postcode}`;
-                    selectAddress(fullAddress);
-                } else alert('Full address not found');
-            }).catch(()=>alert('Error fetching full address'));
+    function fetchAddresses(postcode) {
+        addressList.innerHTML = `<p style="padding:10px">Searching...</p>`;
+
+        fetch(`https://api.postcodes.io/postcodes/${postcode}/autocomplete`)
+            .then(res => res.json())
+            .then(data => {
+                addressList.innerHTML = '';
+
+                if (!data.result || data.result.length === 0) {
+                    addressList.innerHTML = `<p style="padding:10px;color:red">No address found</p>`;
+                    return;
+                }
+
+                const limit = parseFloat(localStorage.getItem('selected_mile_value')) || 3;
+
+                data.result.forEach(pc => {
+
+                    fetch(`https://api.postcodes.io/postcodes/${pc}`)
+                        .then(res => res.json())
+                        .then(fullData => {
+
+                            if (fullData.status === 200) {
+                                const r = fullData.result;
+
+                                // Calculate distance
+                                const distance = calculateDistance(SHOP_LAT, SHOP_LNG, r.latitude, r.longitude);
+                                const rounded = distance.toFixed(2);
+
+                                if (distance <= limit) {
+                                    const fullAddress = `${r.admin_ward}, ${r.parish}, ${r.postcode}`;
+                                    // Inside → clickable
+                                    const div = document.createElement('div');
+                                    div.className = 'address-item';
+                                    div.style.cssText = 'border-left:5px solid green; padding:10px; cursor:pointer';
+                                    div.innerHTML = `<strong style="color:green;">${pc}</strong><p>${rounded} miles - Inside Delivery Area</p>`;
+                                    div.addEventListener('click', () => selectAddress(fullAddress));  // ✅ No quote issues
+                                    addressList.appendChild(div);
+                                } else {
+                                    // Outside → not clickable
+                                    const div = document.createElement('div');
+                                    div.className = 'address-item';
+                                    div.style.cssText = 'border-left:5px solid red; padding:10px; opacity:0.6; cursor:not-allowed';
+                                    div.innerHTML = `<strong style="color:red;">${pc}</strong><p>${rounded} miles - Outside Delivery Area</p>`;
+                                    addressList.appendChild(div);
+                                }
+                            }
+
+                        });
+                });
+
+            })
+            .catch(() => {
+                addressList.innerHTML = `<p style="padding:10px;color:red">Error loading addresses</p>`;
+        });
     }
+
+    // window.fetchFullAddress = postcode=>{
+    //     fetch(`https://api.postcodes.io/postcodes/${postcode}`)
+    //         .then(res=>res.json())
+    //         .then(data=>{
+    //             if(data.status===200 && data.result){
+    //                 const r = data.result;
+    //                 const fullAddress = `${r.admin_ward}, ${r.parish}, ${r.postcode}`;
+    //                 selectAddress(fullAddress);
+    //             } else alert('Full address not found');
+    //         }).catch(()=>alert('Error fetching full address'));
+    // }
 
     function selectAddress(fullAddress){
         addressText.classList.add('selected-address');
@@ -325,6 +435,8 @@ document.addEventListener('DOMContentLoaded', () => {
         searchInput.value = fullAddress;
         addressList.innerHTML='';
         modal.style.display='none';
+
+        localStorage.setItem('selected_address', fullAddress);
     }
 
     /* ---------------- Pay Button ---------------- */

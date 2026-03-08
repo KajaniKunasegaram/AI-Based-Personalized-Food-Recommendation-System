@@ -43,14 +43,41 @@ body {
     flex: 1;
     overflow-y: auto;
 }
-
 .order-item {
+    display: flex;
+    width: 100%;
+    padding: 8px 0;
+    font-size: 14px;
+    align-items: flex-start; /* important */
+}
+
+.order-item .name {
+    flex: 1;              /* remaining space edukkum */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.order-item .qty {
+    width: 40px;
+    text-align: center;
+}
+
+.order-item .unit {
+    width: 70px;
+    text-align: right;
+}
+
+.order-item .total {
+    width: 80px;
+    text-align: right;
+}
+
+/* .order-item {
     display: flex;
     justify-content: space-between;
     padding: 8px 0;
-    /* border-bottom: 1px solid #eee; */
     font-size: 14px;
-}
+} */
 
 /* .order-summary {
     margin-top: 15px;

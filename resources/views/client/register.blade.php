@@ -1,93 +1,86 @@
 @extends('client.layout')
-
 @section('content')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link rel="stylesheet" href="{{asset('css/client/register-login.css')}}">        
+<link rel="stylesheet" href="{{asset('css/client/register-login.css')}}">
 
-@if ($errors->any())
-    <div class="error-msg">
-        {{ $errors->first() }}
-    </div>
+@if($errors->any())
+<div class="error-msg" id="errorMessage">
+    <i class="fa-solid fa-circle-xmark"></i>
+    <span>{{ $errors->first() }}</span>
+</div>
 @endif
 
+<div class="auth-page">
+    <div class="auth-card">
 
-<body>
-    <!-- @if(session('success'))
-    <div class="success-msg">{{ session('success') }}</div>
-@endif -->
-   
-<!-- @if ($errors->any())
-    <div class="error-msg">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
+        <a a href="{{ route('login') }}" class="back-btn">
+            <i class="fa fa-arrow-left"></i>
+        </a>
+
+        <div class="auth-logo">
+            <img src="/images/logo.png" alt="logo">
+            <div class="auth-label">CREATE ACCOUNT</div>
+            <h1 class="auth-title">Welcome <em>Aboard</em></h1>
+        </div>
+
+        <form action="{{ route('customer.register') }}" method="POST" class="auth-form">
+            @csrf
+
+            <div class="field-group">
+                <i class="fa fa-user"></i>
+                <input type="text" name="name" id="name" placeholder=" " required>
+                <label for="name">Full Name</label>
+                <div class="field-line"></div>
+            </div>
+
+            <div class="field-group">
+                <i class="fa fa-envelope"></i>
+                <input type="email" name="email" id="email" placeholder=" " required>
+                <label for="email">Email Address</label>
+                <div class="field-line"></div>
+            </div>
+
+            <div class="field-group">
+                <i class="fa fa-lock"></i>
+                <input type="password" name="password" id="password" placeholder=" " required>
+                <label for="password">Password</label>
+                <div class="field-line"></div>
+            </div>
+
+            <div class="field-group">
+                <i class="fa fa-lock"></i>
+                <input type="password" name="password_confirmation" id="password_confirmation" placeholder=" " required>
+                <label for="password_confirmation">Confirm Password</label>
+                <div class="field-line"></div>
+            </div>
+
+            <div class="auth-terms">
+                By registering, you agree to our
+                <a href="#">Terms & Conditions</a> and <a href="#">Privacy Policy</a>
+            </div>
+
+            <button type="submit" class="auth-btn">
+                <span>Register</span>
+                <i class="fa-solid fa-user-plus"></i>
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            Already have an account? <a href="{{ route('login') }}">Login here</a>
+        </div>
+
     </div>
-@endif -->
-
-<div class="card">
-    <a href="{{ route('checkout') }}" class="back">
-        <i class="fa fa-arrow-left"></i>
-    </a>
-
-    <div class="logoo">
-        <img src="/images/logo.png" alt="logo">
-        <h2>WELCOME</h2>
-    </div>
-
-   <form action="{{ route('customer.register') }}" method="POST">
-        @csrf  <!-- CSRF token for security -->
-
-        <div class="input-group">
-            <i class="fa fa-user"></i>
-            <input type="text" name="name" placeholder="Full Name" required>
-        </div>
-
-        <div class="input-group">
-            <i class="fa fa-envelope"></i>
-            <input type="email" name="email" placeholder="Email address" required>
-        </div>
-
-        <div class="input-group">
-            <i class="fa fa-lock"></i>
-            <input type="password" name="password" placeholder="Password" required>
-        </div>
-
-        <div class="input-group">
-            <i class="fa fa-lock"></i>
-            <input type="password" name="password_confirmation" placeholder="Confirm Password" required>
-        </div>
-
-        <div class="terms">
-            By signing in, you agree to our <br>
-            <a href="#">Terms & Conditions</a> and <a href="#">Privacy Policy</a>
-        </div>
-
-        <button type="submit" class="btn">REGISTER</button>
-
-        <div class="footer">
-            Have an account? <a href="{{ route('login') }}">Login here</a>
-        </div>
-    </form>
 </div>
 
-
 <script>
-    // Select the error message
-    const errorBox = document.querySelector('.error-msg');
-    if(errorBox) {
-        // Wait 3 seconds, then fade out
+    const el = document.getElementById('errorMessage');
+    if (el) {
         setTimeout(() => {
-            errorBox.style.transition = 'opacity 0.5s ease';
-            errorBox.style.opacity = '0';
-            // Optional: remove from DOM after fading out
-            setTimeout(() => {
-                errorBox.remove();
-            }, 500);
-        }, 3000); // 3000ms = 3 seconds
+            el.style.transition = 'opacity 0.5s ease';
+            el.style.opacity = '0';
+            setTimeout(() => el.remove(), 500);
+        }, 3000);
     }
 </script>
-
 
 @endsection

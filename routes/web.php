@@ -17,6 +17,8 @@ use App\Http\Controllers\Admin\AdCustomerController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DeliveryBoysController;
+use App\Http\Controllers\Admin\WebsiteStatusController;
+
 
 use App\Http\Controllers\DriverAuthController;
 
@@ -120,6 +122,7 @@ Route::middleware('driver.auth')->group(function () {
 });
 
 
+
 // Route::prefix('driver')->group(function () {
 
 //     Route::get('/login', [DriverAuthController::class,'showLoginForm'])->name('driver.login');
@@ -134,7 +137,11 @@ Route::middleware('driver.auth')->group(function () {
 
 
 Route::get('admin/take-payment', fn() => view('admin.take-payment'));
-Route::get('admin/website-status', fn() => view('admin.website-status'));
+
+Route::get('/admin/website-status',  [WebsiteStatusController::class, 'index'])->name('admin.website.status');
+Route::post('/admin/website-status', [WebsiteStatusController::class, 'save'])->name('admin.website.status.save');
+
+
 // Route::get('admin/customers', fn() => view('admin.customers'));
 
 Route::get('admin/customers', [AdCustomerController::class, 'index'])

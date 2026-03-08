@@ -1,7 +1,13 @@
 /* General */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap');
+
+*{
+    font-family: 'Outfit', sans-serif;
+    box-sizing: border-box;
+}
 body {
     margin: 0;
-    font-family: 'Arial', sans-serif;
     color: #333;
     line-height: 1.6;
     /* background-color: black; */
