@@ -54,6 +54,17 @@ class AdOrderController extends Controller
         ]);
     }
 
+    public function pollOrders(Request $request)
+    {
+        $status = $request->get('status', 'new');
+        
+        $orders = MOrderModel::with('items')
+            ->where('status', $status)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json($orders);
+    }
     
 
 }

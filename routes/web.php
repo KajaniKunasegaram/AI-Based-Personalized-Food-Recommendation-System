@@ -95,6 +95,7 @@ Route::get('/admin/menu', [CategoryController::class, 'menus']);
 // Route::get('admin/orders', fn() => view('admin.orders'));
 Route::prefix('admin')->group(function () {
     Route::get('/orders', [AdOrderController::class, 'index'])->name('admin.orders');
+    Route::get('/orders/poll', [AdOrderController::class, 'pollOrders']); 
     Route::get('/orders/{id}', [AdOrderController::class, 'show']);
     Route::post('/orders/{id}/status', [AdOrderController::class, 'updateStatus']);
     Route::post('/orders/{id}/assign-driver',[AdOrderController::class, 'assignDriver']);

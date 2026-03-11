@@ -479,5 +479,153 @@
     }
 </script>
 
+<script>
+    let pollingInterval = null;
+
+    function startPolling() {
+        if (pollingInterval) clearInterval(pollingInterval);
+        pollingInterval = setInterval(pollNewOrders, 10000);
+    }
+
+    function pollNewOrders() {
+        fetch(`/admin/orders/poll?status=new`)
+            .then(res => res.json())
+            .then(orders => {
+                const tbody = document.querySelector('#ordersTable tbody');
+
+                // DOM-ல் இருக்க IDs collect பண்ணு
+                const domIds = new Set();
+                tbody.querySelectorAll('tr').forEach(row => {
+                    const id = row.querySelector('td')?.innerText?.trim();
+                    if (id) domIds.add(parseInt(id));
+                });
+
+                let hasNew = false;
+
+                orders.forEach(order => {
+                    if (!domIds.has(order.id)) {
+                        hasNew = true;
+
+                        const tr = document.createElement('tr');
+                        tr.setAttribute('onclick', `loadOrder(${order.id})`);
+                        tr.setAttribute('data-status', order.status);
+
+                        const address = order.order_type === 'pickup'
+                            ? 'Instore'
+                            : (order.delivery_address || '');
+
+                        const typeIcon = order.order_type === 'delivery' ? '🚚' : '🏠';
+                        const payIcon  = order.payment_type === 'card'   ? '💳' : '💵';
+
+                        const t = new Date(order.created_at);
+                        const timeStr = t.getHours().toString().padStart(2,'0')
+                                      + ':' + t.getMinutes().toString().padStart(2,'0');
+
+                        tr.innerHTML = `
+                            <td>${order.id}</td>
+                            <td>${typeIcon}</td>
+                            <td>${address}</td>
+                            <td>${timeStr}</td>
+                            <td>£${parseFloat(order.total_amount).toFixed(2)}</td>
+                            <td>${payIcon}</td>
+                            <td><span>—</span></td>
+                        `;
+
+                        // Yellow highlight for new order
+                        tr.style.background = '#fffde7';
+                        setTimeout(() => tr.style.background = '', 3000);
+
+                        tbody.insertBefore(tr, tbody.firstChild);
+
+                        // உன் existing filterStatus - current tab active ஆ இருந்தா மட்டும் show பண்ணு
+                        const activeBtn = document.querySelector('.status-tabs button.active');
+                        const activeStatus = activeBtn?.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
+                        tr.style.display = (activeStatus === 'new') ? 'table-row' : 'none';
+                    }
+                });
+
+                if (hasNew) {
+                    playNotificationSound();
+                    showToast('🔔 New Order Received!');
+                }
+            })
+            .catch(err => console.error('Polling error:', err));
+    }
+
+    // function playNotificationSound() {
+    //     try {
+    //         const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    //         const osc = ctx.createOscillator();
+    //         const gain = ctx.createGain();
+    //         osc.connect(gain);
+    //         gain.connect(ctx.destination);
+    //         osc.frequency.value = 880;
+    //         osc.type = 'sine';
+    //         gain.gain.setValueAtTime(0.5, ctx.currentTime);
+    //         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+    //         osc.start(ctx.currentTime);
+    //         osc.stop(ctx.currentTime + 0.5);
+    //     } catch(e) {}
+    // }
+
+//     function playNotificationSound() {
+//     const audio = new Audio('https://www.zedge.net/ringtones/95aced09-2f5f-3a28-ae9f-4e2f7a8defe3');
+//     audio.play();
+// }
+
+// function playNotificationSound() {
+//     const audio = new Audio('/sounds/notification.mp3'); // உன் sound file path
+//     audio.play();
+// }
+
+function playNotificationSound() {
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function beep(freq, startTime, duration) {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.frequency.value = freq;
+            osc.type = 'sine';
+            gain.gain.setValueAtTime(0.5, startTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+            osc.start(startTime);
+            osc.stop(startTime + duration);
+        }
+
+        const t = ctx.currentTime;
+        beep(880, t,        0.15);  // ding 1
+        beep(988, t + 0.2,  0.15);  // ding 2
+        beep(1174, t + 0.4, 0.3);   // ding 3 (high)
+
+    } catch(e) {}
+}
+    function showToast(message) {
+        let toast = document.getElementById('orderToast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'orderToast';
+            toast.style.cssText = `
+                position: fixed; bottom: 30px; right: 30px;
+                background: #4CAF50; color: white;
+                padding: 15px 25px; border-radius: 8px;
+                font-size: 16px; font-weight: bold;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                z-index: 9999; transition: opacity 0.5s;
+            `;
+            document.body.appendChild(toast);
+        }
+        toast.innerText = message;
+        toast.style.opacity = '1';
+        setTimeout(() => { toast.style.opacity = '0'; }, 3000);
+    }
+
+    // Page load ஆகும்போது polling start
+    document.addEventListener('DOMContentLoaded', function () {
+        startPolling();
+    });
+</script>
 
 @endsection
